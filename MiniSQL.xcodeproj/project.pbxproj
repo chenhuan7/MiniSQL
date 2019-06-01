@@ -14,6 +14,7 @@
 		E413657322A2596F007AD3D5 /* RecordManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E413657122A2596F007AD3D5 /* RecordManager.cpp */; };
 		E413657622A2598F007AD3D5 /* IndexManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E413657422A2598F007AD3D5 /* IndexManager.cpp */; };
 		E413657922A259A4007AD3D5 /* BufferManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E413657722A259A4007AD3D5 /* BufferManager.cpp */; };
+		E413657B22A25C3C007AD3D5 /* makefile in Sources */ = {isa = PBXBuildFile; fileRef = E413657A22A25C3C007AD3D5 /* makefile */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -43,6 +44,7 @@
 		E413657522A2598F007AD3D5 /* IndexManager.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = IndexManager.hpp; sourceTree = "<group>"; };
 		E413657722A259A4007AD3D5 /* BufferManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BufferManager.cpp; sourceTree = "<group>"; };
 		E413657822A259A4007AD3D5 /* BufferManager.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BufferManager.hpp; sourceTree = "<group>"; };
+		E413657A22A25C3C007AD3D5 /* makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +90,7 @@
 				E413657522A2598F007AD3D5 /* IndexManager.hpp */,
 				E413657722A259A4007AD3D5 /* BufferManager.cpp */,
 				E413657822A259A4007AD3D5 /* BufferManager.hpp */,
+				E413657A22A25C3C007AD3D5 /* makefile */,
 			);
 			path = MiniSQL;
 			sourceTree = "<group>";
@@ -154,6 +157,7 @@
 				E413657022A25954007AD3D5 /* CatalogManager.cpp in Sources */,
 				E413656722A257B6007AD3D5 /* Interpreter.cpp in Sources */,
 				E413657922A259A4007AD3D5 /* BufferManager.cpp in Sources */,
+				E413657B22A25C3C007AD3D5 /* makefile in Sources */,
 				4EBF492922A2498400394E7C /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
