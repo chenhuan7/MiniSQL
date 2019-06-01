@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4EBF492922A2498400394E7C /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4EBF492822A2498400394E7C /* main.cpp */; };
+		E413656722A257B6007AD3D5 /* Interpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E413656522A257B6007AD3D5 /* Interpreter.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +26,8 @@
 /* Begin PBXFileReference section */
 		4EBF492522A2498400394E7C /* MiniSQL */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MiniSQL; sourceTree = BUILT_PRODUCTS_DIR; };
 		4EBF492822A2498400394E7C /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		E413656522A257B6007AD3D5 /* Interpreter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Interpreter.cpp; sourceTree = "<group>"; };
+		E413656622A257B6007AD3D5 /* Interpreter.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Interpreter.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +61,8 @@
 			isa = PBXGroup;
 			children = (
 				4EBF492822A2498400394E7C /* main.cpp */,
+				E413656522A257B6007AD3D5 /* Interpreter.cpp */,
+				E413656622A257B6007AD3D5 /* Interpreter.hpp */,
 			);
 			path = MiniSQL;
 			sourceTree = "<group>";
@@ -118,6 +123,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E413656722A257B6007AD3D5 /* Interpreter.cpp in Sources */,
 				4EBF492922A2498400394E7C /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
