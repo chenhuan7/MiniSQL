@@ -9,6 +9,11 @@
 #ifndef RecordManager_hpp
 #define RecordManager_hpp
 
-#include <stdio.h>
+#include "MiniSQL.h"
+
+class RecordManager {
+public:
+    
+};
 
 #endif /* RecordManager_hpp */

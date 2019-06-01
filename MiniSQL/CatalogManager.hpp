@@ -9,6 +9,14 @@
 #ifndef CatalogManager_hpp
 #define CatalogManager_hpp
 
-#include <stdio.h>
+#include "MiniSQL.h"
+
+class CatalogManager {
+public:
+    Table createTable(const std::string &tableName, const std::vector<AttributeType> &data);
+    bool dropTable(const std::string &tableName);
+    bool createIndex(const std::string &tableName, const std::string &indexName, int attributeIndex);
+    bool dropIndex(const std::string &indexName);
+};
 
 #endif /* CatalogManager_hpp */

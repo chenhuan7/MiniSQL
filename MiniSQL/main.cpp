@@ -6,7 +6,15 @@
 //  Copyright © 2019 Zhao Weikai, Shen Ji, Chen Huan. All rights reserved.
 //
 
-#include <iostream>
+#include "MiniSQL.h"
+#include "API.hpp"
+#include "BufferManager.hpp"
+#include "CatalogManager.hpp"
+#include "RecordManager.hpp"
+#include "IndexManager.hpp"
+#include "Interpreter.hpp"
+
+using namespace std;
 
 int main(int argc, const char * argv[]) {
     // insert code here...

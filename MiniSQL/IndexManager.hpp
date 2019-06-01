@@ -9,6 +9,11 @@
 #ifndef IndexManager_hpp
 #define IndexManager_hpp
 
-#include <stdio.h>
+#include "MiniSQL.h"
+
+class IndexManager {
+    void createIndex(const std::string &indexName, const std::string &dbName, Table &table, const AttributeType &attr);
+    void dropIndex(const std::string &indexName);
+};
 
 #endif /* IndexManager_hpp */

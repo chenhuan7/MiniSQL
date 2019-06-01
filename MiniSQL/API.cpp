@@ -7,3 +7,8 @@
 //
 
 #include "API.hpp"
+using namespace std;
+
+void API::createTable(const std::string &tableName, const std::vector<AttributeType> &data, int primaryKey) {
+    
+}
