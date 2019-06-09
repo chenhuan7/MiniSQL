@@ -14,18 +14,30 @@
 #include <algorithm>
 #include "CatalogManager.hpp"
 #include "MiniSQL.h"
-Table CatalogManager::createTable(const std::string &tableName, const std::vector<AttributeType> &data){
+Table* CatalogManager::createTable(const std::string &tableName, const std::vector<AttributeType> &data){
+    Table* newTable;
     if(hasTable(tableName)){
         std::cout<<"already created!"<<std::endl;
+        return NULL;
     }
     else{
-        Table newTable(tableName,data);
-        
+        newTable=new Table(tableName,data);
+        return newTable;
     }
     
 }
 bool CatalogManager::dropTable(const std::string &tableName){
-    
+    if(!hasTable(tableName)){
+        std::cout<<"table not exist!"<<std::endl;
+        return false;
+    }
+    else{
+        
+        
+        
+        
+        return true;
+    }
 }
 bool CatalogManager::createIndex(const std::string &tableName, const std::string &indexName, int attributeIndex){
     
@@ -46,8 +58,11 @@ bool CatalogManager::hasTable(const std::string &tableName){
     else
         return false;
 }
-Table CatalogManager::loadTable(const std::string &tableName){
-    
+Table* CatalogManager::loadTable(const std::string &tableName){
+    if(!hasTable(tableName)){
+        std::cout<<"no table"<<std::endl;
+        return NULL;
+    }
 }
 bool CatalogManager::hasIndex(const std::string &indexName){
     
