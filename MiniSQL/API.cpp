@@ -15,7 +15,11 @@ void API::createTable(const std::string &tableName, const std::vector<AttributeT
         return;
     }
     
-    Table newTable = API::catalogManager.createTable(tableName, data);
+    Table *newTable = API::catalogManager.createTable(tableName, data);
+    
+    if (newTable) {
+        newTable->writeTable();
+    }
 }
 void API::dropTable(const std::string &tableName) {
     if (!API::catalogManager.hasTable(tableName)){
