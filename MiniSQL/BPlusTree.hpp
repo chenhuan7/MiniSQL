@@ -15,6 +15,17 @@ template <typename T>
 class TreeNode {
 public:
     TreeNode();
+    
+private:
+    Tree parent;
+    bool isLeaf;
+    int degree;
+    int keyNum;
+    std::vector<T> keys;
+    std::vector<Tree> childs;
+    Tree nextLeaf;
+    
+    bool findKey(const T &key);
 };
 
 template <typename T>
@@ -22,15 +33,17 @@ class BPlusTree {
 public:
     BPlusTree(std::string Name, int Size, int Degree);
     ~BPlusTree();
-    void initBPlusTree();
-    void readValues();
-    void insertKey(T &key);
-    void deleteKey(T &key);
+    void insertKey(const T &key, int value);
+    void deleteKey(const T &key);
+    
 private:
     std::string fileName;
     int keySize;
     int degree;
     Tree root;
+    
+    void initBPlusTree();
+    void readValues();
 };
 
 #endif /* BPlusTree_hpp */
