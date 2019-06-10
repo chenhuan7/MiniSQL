@@ -1,13 +1,13 @@
 //
-//  BPlusTree.h
+//  BPlusTree.hpp
 //  MiniSQL
 //
 //  Created by 沈霁 on 2019/6/11.
 //  Copyright © 2019 Zhao Weikai, Shen Ji, Chen Huan. All rights reserved.
 //
 
-#ifndef BPlusTree_h
-#define BPlusTree_h
+#ifndef BPlusTree_hpp
+#define BPlusTree_hpp
 #include "MiniSQL.h"
 typedef TreeNode<T>* Tree;
 
@@ -22,6 +22,10 @@ class BPlusTree {
 public:
     BPlusTree(std::string Name, int Size, int Degree);
     ~BPlusTree();
+    void initBPlusTree();
+    void readValues();
+    void insertKey(T &key);
+    void deleteKey(T &key);
 private:
     std::string fileName;
     int keySize;
@@ -29,11 +33,4 @@ private:
     Tree root;
 };
 
-BPlusTree<T>::BPlusTree(std::string Name, int Size, int Degree):
-    fileName(Name), keySize(Size), degree(Degree), root(NULL)
-{
-    initBPlusTree();
-    read();
-}
-
-#endif /* BPlusTree_h */
+#endif /* BPlusTree_hpp */
