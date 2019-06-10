@@ -46,6 +46,7 @@
 		E413657822A259A4007AD3D5 /* BufferManager.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BufferManager.hpp; sourceTree = "<group>"; };
 		E413657A22A25C3C007AD3D5 /* makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
 		E413657C22A2B2AE007AD3D5 /* MiniSQL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MiniSQL.h; sourceTree = "<group>"; };
+		E453C54622AEC19200D9140A /* BPlusTree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BPlusTree.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +94,7 @@
 				E413657822A259A4007AD3D5 /* BufferManager.hpp */,
 				E413657A22A25C3C007AD3D5 /* makefile */,
 				E413657C22A2B2AE007AD3D5 /* MiniSQL.h */,
+				E453C54622AEC19200D9140A /* BPlusTree.h */,
 			);
 			path = MiniSQL;
 			sourceTree = "<group>";
