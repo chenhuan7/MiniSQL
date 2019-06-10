@@ -12,6 +12,8 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <cmath>
+
 
 class AttributeType {
 public:
@@ -20,7 +22,7 @@ public:
     int length;
     bool isUnique;
    // std::set<std::string> indices;
-    //bool operator == (const AttributeType &rhs) const;
+    //bool operator == (const AttributeType &x) const;
 };
 
 class Table {
@@ -58,6 +60,78 @@ public:
         
     }
     
+};
+class element{
+    int intT;
+    float floatT;
+    std::string stringT;
+    int type;
+    element(){
+        type=-1;
+    }
+    element(int x){
+        intT=x;
+        type=0;
+    }
+    element(double x){
+        floatT=x;
+        type=1;
+    }
+    element(float x){
+        floatT=x;
+        type=1;
+    }
+    element(std::string x){
+        stringT=x;
+        type=2;
+    }
+    element(const char *x){
+        stringT=x;
+        type=2;
+    }
+    void printElement() const {
+        switch (type) {
+            case 0: std::cout << intT; return;
+            case 1: std::cout << floatT; return;
+            case 2: std::cout << stringT; return;
+            default:std::cout << "element error!"<<std::endl; return;
+        }
+    }
+    bool operator < (const element &x) const {
+       // assert(type == x.type);
+        switch (type) {
+            case 0: return intT < x.intT;
+            case 1: return floatT < x.floatT;
+            case 2: return stringT < x.stringT;
+            default: assert(false);
+        }
+    }
+    
+    bool operator == (const element &x) const {
+       // assert(type == x.type);
+        switch (type) {
+            case 0: return intT == x.intT;
+            case 1: return fabs(floatT - x.floatT) < 1e-8;
+            case 2: return stringT == x.stringT;
+            default: assert(false);
+        }
+    }
+    
+    bool operator > (const element &x) const {
+        return !(*this < x || *this == x);
+    }
+    
+    bool operator >= (const element &x) const {
+        return *this > x || *this == x;
+    }
+    
+    bool operator <= (const element &x) const {
+        return *this < x || *this == x;
+    }
+    
+    bool operator != (const element &x) const {
+        return !(*this == x);
+    }
 };
 
 
