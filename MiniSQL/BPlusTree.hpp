@@ -15,6 +15,7 @@ template <typename T>
 class TreeNode {
 public:
     TreeNode();
+    void insertKey(const T &key, int value);
     
 private:
     Tree parent;
@@ -25,7 +26,7 @@ private:
     std::vector<Tree> childs;
     Tree nextLeaf;
     
-    bool findKey(const T &key);
+    bool findKey(const T &key, Tree &p);
 };
 
 template <typename T>

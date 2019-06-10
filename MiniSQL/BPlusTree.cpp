@@ -46,7 +46,7 @@ bool TreeNode<T>::findKey(const T &key, Tree &p) {
     
     int left=0, right=keys.size()-1;
     int pnow = (left+right)/2;
-    while(left <= right) {
+    while (left <= right) {
         pnow = (left+right)/2;
         if (keys[pnow] < key)
             left = pnow+1;
@@ -54,9 +54,16 @@ bool TreeNode<T>::findKey(const T &key, Tree &p) {
             right = pnow-1;
     }
     if (keys[pnow] == key) {
-        p=childs[pnow+1];
+        p = childs[pnow+1];
         return true;
     }
-    else
-        return false;
+    else {
+        p = childs[pnow];
+        return p->findKey(key, p);
+    }
+}
+
+template <typename T>
+void TreeNode<T>::insertKey(const T &key, int value) {
+    
 }
