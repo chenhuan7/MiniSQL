@@ -9,6 +9,34 @@
 #ifndef Interpreter_hpp
 #define Interpreter_hpp
 
-#include <stdio.h>
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <cmath>
+#include <algorithm>
+#include <fstream>
+#include "API.hpp"
+#include "CatalogManager.hpp"
 
+class Interpreter{
+public:
+    Interpreter();
+    ~Interpreter();
+    void query();
+    void read();
+    void selectRecord(int i);
+    void deleteRecord(int i);
+    void dropTable(int i);
+    void dropIndex(int i);
+    void createTable(int i);
+    void createIndex(int i);
+    void insertRecord(int i);
+    void execFile(int i);
+    void exitMiniSQL();
+    
+private:
+    std::string queryString;
+    std::string getWord(int &i);
+    
+};
 #endif /* Interpreter_hpp */
