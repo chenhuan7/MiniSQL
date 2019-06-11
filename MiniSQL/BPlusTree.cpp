@@ -18,6 +18,7 @@ fileName(Name), keySize(Size), degree(Degree), root(NULL)
 
 template <typename T>
 BPlusTree<T>::~BPlusTree() {
+    root->clear();
 }
 
 template <typename T>
@@ -27,21 +28,85 @@ bool BPlusTree<T>::insertKey(const T &key, int value) {
         return false;
     }
     p->insertKey(key, value);
+    if (p->keyNum == degree) {
+        
+    }
     return true;
 }
 
 template <typename T>
-TreeNode<T>::TreeNode(){
-    
+void TreeNode<T>::clear() {
+    while (childs.size()) {
+        childs.back()->clear();
+        delete childs.back();
+        childs.pop_back();
+    }
 }
 
 template <typename T>
-bool TreeNode<T>::findKey(const T &key, Tree &p) {
-    if (!keys.size()) {
+int TreeNode<T>::getKeyIndex(const T &key) {
+    int left=0, right=keys.size()-1;
+    while (left < right) {
+        int pnow = (left+right)/2;
+        if (keys[pnow] < key)
+            left = pnow+1;
+        else
+            right = pnow-1;
+    }
+    return left;
+}
+
+template <typename T>
+TreeNode<T>::TreeNode(bool Leaf): keyNum(0), parent(NULL), isLeaf(Leaf), degree(0), nextLeaf(NULL)
+{
+    keys.clear();
+    values.clear();
+    childs.clear();
+}
+
+template <typename T>
+bool TreeNode<T>::findKey(const T &key, TreeNode *p) {
+    if (!keyNum) {
         return false;
     }
     if (keys[0]>key || keys[keys.size()-1]<key){
         return false;
+    }
+
+    int left=0, right=keys.size()-1;
+    int pnow = (left+right)/2;
+    while (left <= right) {
+        pnow = (left+right)/2;
+        if (keys[pnow] < key)
+            left = pnow+1;
+        else
+            right = pnow-1;
+    }
+    if (keys[pnow] == key) {
+        return true;
+    }
+    else {
+        p = childs[pnow];
+        return p->findKey(key, p);
+    }
+}
+
+template <typename T>
+bool TreeNode<T>::insertKey(const T &key, int value) {
+    if (!isLeaf)
+        return false;
+    if (!keys.size()){
+        keys.push_back(key);
+        values.push_back(value);
+        keyNum = keys.size();
+        return true;
+    }
+    
+    if (key>keys[keyNum-1]) {
+        keys.push_back(key);
+        values.push_back(value);
+        keyNum = keys.size();
+        return true;
     }
     
     int left=0, right=keys.size()-1;
@@ -53,17 +118,8 @@ bool TreeNode<T>::findKey(const T &key, Tree &p) {
         else
             right = pnow-1;
     }
-    if (keys[pnow] == key) {
-        p = childs[pnow+1];
-        return true;
-    }
-    else {
-        p = childs[pnow];
-        return p->findKey(key, p);
-    }
-}
-
-template <typename T>
-void TreeNode<T>::insertKey(const T &key, int value) {
-    
+    keys.insert(keys.begin()+pnow, key);
+    values.insert(keys.begin()+pnow, value);
+    keyNum = keys.size();
+    return true;
 }

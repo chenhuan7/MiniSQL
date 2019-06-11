@@ -9,35 +9,42 @@
 #ifndef BPlusTree_hpp
 #define BPlusTree_hpp
 #include "MiniSQL.h"
-typedef TreeNode<T>* Tree;
 
 template <typename T>
 class TreeNode {
 public:
-    TreeNode();
-    void insertKey(const T &key, int value);
+    int keyNum;
+    
+    TreeNode(bool Leaf);
+    void clear();
+    bool insertKey(const T &key, int value);
+    void split(int childIndex);
     
 private:
-    Tree parent;
+    TreeNode *parent;
     bool isLeaf;
     int degree;
-    int keyNum;
     std::vector<T> keys;
-    std::vector<Tree> childs;
-    Tree nextLeaf;
+    std::vector<int> values;
+    std::vector<TreeNode*> childs;
+    TreeNode *nextLeaf;
     
-    bool findKey(const T &key, Tree &p);
+    int getKeyIndex(const T &key);
+    bool findKey(const T &key, TreeNode *p);
 };
+
+
 
 template <typename T>
 class BPlusTree {
 public:
     BPlusTree(std::string Name, int Size, int Degree);
     ~BPlusTree();
-    void insertKey(const T &key, int value);
-    void deleteKey(const T &key);
+    bool insertKey(const T &key, int value);
+    bool deleteKey(const T &key);
     
 private:
+    typedef TreeNode<T>* Tree;
     std::string fileName;
     int keySize;
     int degree;
