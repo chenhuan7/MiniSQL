@@ -17,6 +17,7 @@
 #include <fstream>
 #include "API.hpp"
 #include "CatalogManager.hpp"
+#include "MiniSQL.h"
 
 class Interpreter{
 public:
@@ -39,4 +40,12 @@ private:
     std::string getWord(int &i);
     
 };
+template <class Type>
+Type strToNum(const std::string& str)
+{
+    std::istringstream iss(str);
+    Type num;
+    iss >> num;
+    return num;
+}
 #endif /* Interpreter_hpp */

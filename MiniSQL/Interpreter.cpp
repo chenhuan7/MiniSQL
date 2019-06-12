@@ -135,6 +135,71 @@ void Interpreter::createIndex(int i){
 }
 
 void Interpreter::insertRecord(int i){
+    API API;
+    CatalogManager CM;
+    std::vector<AttributeType> data;
+    std::string tableName;
+    std::string value;
+    element e;
+    int k;
+    if(getWord(i)!="into"){
+        throw 1;
+    }
+    tableName=getWord(i);
+    if(getWord(i)!="values"){
+        throw 1;
+    }
+    if(getWord(i)!="("){
+        throw 1;
+    }
+    data=CM.getAttribute(tableName);
+    k=-1;
+    while(1){
+        value=getWord(i);
+        if(value==")"){
+            break;
+        }
+        k++;
+        
+        if(k>=data.size()){
+            std::cout<<"attribute not match"<<std::endl;
+            throw 1;
+        }
+        switch(data[k].type){
+            case -1:{
+                try{
+                    e.intT=strToNum<int>(value);
+                }catch(...){
+                    std::cout<<"convert failed."<<std::endl;
+                    throw 1;
+                }
+                break;
+            }
+            case 0:{
+                try{
+                    e.floatT=strToNum<float>(value);
+                }catch(...){
+                    std::cout<<"convert failed."<<std::endl;
+                    throw 1;
+                }
+                break;
+            }
+            default:{
+                if(value[0]!='\''&&value[0]!='"'){
+                    throw 1;
+                }
+                if(value[value.length()-1]!='\''&&value[value.length()-1]!='"'){
+                    throw 1;
+                }
+                if(value.length()-1>data[k].type){
+                    std::cout<<"string length too long."<<std::endl;
+                    throw 1;
+                }
+                e.stringT=value.substr(1,value.length()-2);
+            }
+        }
+    }
+    
     
 }
 
