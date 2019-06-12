@@ -13,27 +13,26 @@
 template <typename T>
 class TreeNode {
 public:
-    int keyNum;
+    TreeNode *parent;
+    std::vector<T> keys;
+    std::vector<TreeNode*> childs;
     
-    TreeNode(bool Leaf);
+    TreeNode(TreeNode *Parent=NULL, bool Leaf=false);
     void clear();
     bool insertKey(const T &key, int value);
+    bool deleteKey(const T &key);
     void split(int childIndex);
     
 private:
-    TreeNode *parent;
     bool isLeaf;
     int degree;
-    std::vector<T> keys;
     std::vector<int> values;
-    std::vector<TreeNode*> childs;
     TreeNode *nextLeaf;
     
     int getKeyIndex(const T &key);
-    bool findKey(const T &key, TreeNode *p);
+    void insert(int childIndex,const T &key, TreeNode *childNode);
+    bool findKey(const T &key);
 };
-
-
 
 template <typename T>
 class BPlusTree {

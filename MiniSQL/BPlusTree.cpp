@@ -23,15 +23,29 @@ BPlusTree<T>::~BPlusTree() {
 
 template <typename T>
 bool BPlusTree<T>::insertKey(const T &key, int value) {
-    Tree p = NULL;
-    if (root->findKey(key, p)) {
+    if (root->findKey(key)) {
         return false;
     }
-    p->insertKey(key, value);
-    if (p->keyNum == degree) {
-        
+    if (!root) {
+        root = new TreeNode<T>;
     }
+    if (root->keys.size() >= degree) {
+        TreeNode<T> *newNode = new TreeNode<T>(root);
+        root->parent = newNode;
+        newNode->childs.push_back(root);
+        root->split(0);
+        root=newNode;
+    }
+    root->insertKey(key, value);
     return true;
+}
+
+template <typename T>
+TreeNode<T>::TreeNode(TreeNode *Parent, bool Leaf): parent(Parent), isLeaf(Leaf), degree(0), nextLeaf(NULL)
+{
+    keys.clear();
+    values.clear();
+    childs.clear();
 }
 
 template <typename T>
@@ -57,69 +71,70 @@ int TreeNode<T>::getKeyIndex(const T &key) {
 }
 
 template <typename T>
-TreeNode<T>::TreeNode(bool Leaf): keyNum(0), parent(NULL), isLeaf(Leaf), degree(0), nextLeaf(NULL)
-{
-    keys.clear();
-    values.clear();
-    childs.clear();
-}
-
-template <typename T>
-bool TreeNode<T>::findKey(const T &key, TreeNode *p) {
-    if (!keyNum) {
+bool TreeNode<T>::findKey(const T &key) {
+    if (!keys.size()) {
         return false;
     }
     if (keys[0]>key || keys[keys.size()-1]<key){
         return false;
     }
-
-    int left=0, right=keys.size()-1;
-    int pnow = (left+right)/2;
-    while (left <= right) {
-        pnow = (left+right)/2;
-        if (keys[pnow] < key)
-            left = pnow+1;
-        else
-            right = pnow-1;
-    }
-    if (keys[pnow] == key) {
+    int index = getKeyIndex(key);
+    if (keys[index] == key) {
         return true;
     }
-    else {
-        p = childs[pnow];
-        return p->findKey(key, p);
-    }
+    if (isLeaf)
+        return false;
+    return childs[index]->findKey(key);
 }
 
 template <typename T>
+void TreeNode<T>::split(int childIndex) {
+    TreeNode *newNode = new TreeNode(this);
+    for (int i=0; i<degree/2; ++i)
+        newNode->insertKey(keys[i+degree/2], childs[i+degree/2]);
+    for (int i=0; i<degree/2; ++i) {
+        keys.pop_back();
+        childs.pop_back();
+    }
+    parent->insert(childIndex+1, newNode->keys[0], newNode);
+}
+
+template <typename T>
+void TreeNode<T>::insert(int childIndex,const T &key, TreeNode *childNode) {
+    keys.insert(keys.begin()+childIndex, key);
+    childs.insert(childs.begin()+childIndex, childNode);
+}
+
+//template <typename T>
+//void TreeNode<T>::mergeChild() {
+//    insert(<#int childIndex#>, <#const T &key#>, <#TreeNode<T> *childNode#>)
+//}
+
+template <typename T>
 bool TreeNode<T>::insertKey(const T &key, int value) {
-    if (!isLeaf)
-        return false;
-    if (!keys.size()){
-        keys.push_back(key);
-        values.push_back(value);
-        keyNum = keys.size();
+    if (isLeaf){
+        if (!keys.size()){
+            keys.push_back(key);
+            values.push_back(value);
+            return true;
+        }
+        if (key>keys[keys.size()-1]) {
+            keys.push_back(key);
+            values.push_back(value);
+            return true;
+        }
+        int index = getKeyIndex(key);
+        keys.insert(keys.begin()+index, key);
+        values.insert(keys.begin()+index, value);
         return true;
     }
     
-    if (key>keys[keyNum-1]) {
-        keys.push_back(key);
-        values.push_back(value);
-        keyNum = keys.size();
-        return true;
-    }
+    int keyIndex = getKeyIndex(key);
     
-    int left=0, right=keys.size()-1;
-    int pnow = (left+right)/2;
-    while (left <= right) {
-        pnow = (left+right)/2;
-        if (keys[pnow] < key)
-            left = pnow+1;
-        else
-            right = pnow-1;
-    }
-    keys.insert(keys.begin()+pnow, key);
-    values.insert(keys.begin()+pnow, value);
-    keyNum = keys.size();
     return true;
+}
+
+template <typename T>
+bool TreeNode<T>::deleteKey(const T &key) {
+    
 }
