@@ -222,3 +222,10 @@ int BufferManager::getEmptyPageId() {
         current_position_ = (current_position_ + 1) % frame_size_;
     }
 }
+
+void BufferManager::dropPage(int id)
+{
+    char* buffer_= Frames[id].getBuffer();
+    for (int i = 0;i < PAGESIZE;i++) 
+        buffer_[i] = '\0';
+}
