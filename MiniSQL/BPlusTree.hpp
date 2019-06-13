@@ -20,6 +20,7 @@ public:
     TreeNode(TreeNode *Parent=NULL, bool Leaf=false);
     void clear();
     bool insertKey(const T &key, int value);
+    bool insertKey(const T &key);
     bool deleteKey(const T &key);
     void split(int childIndex);
     
@@ -31,7 +32,7 @@ private:
     
     int getKeyIndex(const T &key);
     void insert(int childIndex,const T &key, TreeNode *childNode);
-    bool findKey(const T &key);
+    bool findKey(const T &key, TreeNode *p);
 };
 
 template <typename T>
@@ -51,6 +52,7 @@ private:
     
     void initBPlusTree();
     void readValues();
+    bool adjustAfterinsert(TreeNode<T> *pNode);
 };
 
 #endif /* BPlusTree_hpp */

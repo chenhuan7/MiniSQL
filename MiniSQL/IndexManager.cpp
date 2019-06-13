@@ -5,14 +5,6 @@
 //  Created by 沈霁 on 2019/6/1.
 //  Copyright © 2019 Zhao Weikai, Shen Ji, Chen Huan. All rights reserved.
 //
-#include <cstdio>
-#include <cstring>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <iomanip>
-#include <map>
-#include <algorithm>
 #include "IndexManager.hpp"
 using namespace std;
 bool isExist(const string &fileName) {

@@ -13,7 +13,10 @@
 #include <iostream>
 #include <string>
 #include <cmath>
-
+#include <fstream>
+#include <sstream>
+#include <iomanip>
+#include <map>
 
 class AttributeType {
 public:

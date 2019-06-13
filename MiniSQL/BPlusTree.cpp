@@ -23,11 +23,12 @@ BPlusTree<T>::~BPlusTree() {
 
 template <typename T>
 bool BPlusTree<T>::insertKey(const T &key, int value) {
-    if (root->findKey(key)) {
-        return false;
-    }
     if (!root) {
         root = new TreeNode<T>;
+    }
+    TreeNode<T> *p=root;
+    if (root->findKey(key, p)) {
+        return false;
     }
     if (root->keys.size() >= degree) {
         TreeNode<T> *newNode = new TreeNode<T>(root);
@@ -36,7 +37,7 @@ bool BPlusTree<T>::insertKey(const T &key, int value) {
         root->split(0);
         root=newNode;
     }
-    root->insertKey(key, value);
+    p->insertKey(key, value);
     return true;
 }
 
@@ -71,7 +72,7 @@ int TreeNode<T>::getKeyIndex(const T &key) {
 }
 
 template <typename T>
-bool TreeNode<T>::findKey(const T &key) {
+bool TreeNode<T>::findKey(const T &key, TreeNode *p) {
     if (!keys.size()) {
         return false;
     }
@@ -84,15 +85,16 @@ bool TreeNode<T>::findKey(const T &key) {
     }
     if (isLeaf)
         return false;
-    return childs[index]->findKey(key);
+    return childs[index]->findKey(key, p);
 }
 
 template <typename T>
 void TreeNode<T>::split(int childIndex) {
     TreeNode *newNode = new TreeNode(this);
-    for (int i=0; i<degree/2; ++i)
-        newNode->insertKey(keys[i+degree/2], childs[i+degree/2]);
-    for (int i=0; i<degree/2; ++i) {
+    int min=(degree-1)/2;
+    for (int i=0; i<min; ++i)
+        newNode->insertKey(keys[i+min], childs[i+min]);
+    for (int i=0; i<min; ++i) {
         keys.pop_back();
         childs.pop_back();
     }
@@ -128,10 +130,24 @@ bool TreeNode<T>::insertKey(const T &key, int value) {
         values.insert(keys.begin()+index, value);
         return true;
     }
-    
-    int keyIndex = getKeyIndex(key);
-    
-    return true;
+    return false;
+}
+
+template <typename T>
+bool TreeNode<T>::insertKey(const T &key) {
+    if (!keys.size()) {
+        keys.push_back(key);
+        return true;
+    }
+    index = getKeyIndex(key);
+    keys.insert(keys.begin()+index, key);
+    childs.insert(childs.begin()+index+1, NULL);
+}
+
+template <typename T>
+bool BPlusTree<T>::adjustAfterinsert(TreeNode<T> *pNode) {
+    T key;
+    TreeNode<T> *newNode = pNode->split(0);
 }
 
 template <typename T>

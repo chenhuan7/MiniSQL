@@ -14,7 +14,7 @@
 class IndexManager {
     void createIndex(const std::string &indexName, const std::string &dbName, Table &table, const AttributeType &attr);
     void dropIndex(const std::string &indexName);
-    //void insertIndex(const std::string &indexName, const element &e, long offset);
+    void insertIndex(const std::string &indexName, const element &e, long offset);
     
 };
 
