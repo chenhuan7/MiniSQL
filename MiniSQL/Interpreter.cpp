@@ -85,7 +85,23 @@ void Interpreter::selectRecord(int i){
 }
 
 void Interpreter::deleteRecord(int i){
+    API API;
+    CatalogManager CM;
+    condition conditions;
+    std::string tableName;
+    if(getWord(i)!="from"){
+        throw 1;
+    }
+    tableName=getWord(i);
+    std::string tmp=getWord(i);
+    if(tmp==":"){
+        API.deleteRecord(tableName, "", conditions);
+        return;
+    }
     
+    if(getWord(i)!="where"){
+        throw 1;
+    }
 }
 
 void Interpreter::dropTable(int i){
@@ -103,8 +119,69 @@ void Interpreter::dropIndex(int i){
 }
 
 void Interpreter::createTable(int i){
+    API API;
+    int k;
+    int primary=-1;
     std::string tableName;
-    
+    tableName=getWord(i);
+    std::vector<AttributeType> data;
+    std::string attributeName;
+    if(getWord(i)!="("){
+        throw 1;
+    }
+    k=0;
+    while(1){
+        attributeName=getWord(i);
+        if(attributeName=="primary"){
+            std::string tmp=getWord(i);
+            if(tmp!="key"){
+                data[k++].name=attributeName;
+                break;
+            }
+            else{
+                std::string tmp=getWord(i);
+                if(tmp!="("){
+                    throw 1;
+                }
+                tmp=getWord(i);
+                for(int find=0;find<data.size();find++){
+                    if(data[find].name==tmp){
+                        primary=find;
+                        data[find].isUnique=true;
+                        break;
+                    }
+                }
+                if(primary==-1){
+                    throw 1;
+                }
+                if(tmp!=")"){
+                    throw 1;
+                }
+                continue;
+            }
+        }
+        else{
+            data[k++].name=attributeName;
+        }
+        data[k-1].type=getType(i);
+        data[k-1].isUnique=false;
+        std::string tmp=getWord(i);
+        if(tmp==","){
+            continue;
+        }
+        else if(tmp==")"){
+            break;
+        }
+        else{
+            if(tmp=="unique"){
+                data[k-1].isUnique=true;
+            }
+            else{
+                throw 1;
+            }
+        }
+    }
+    API.createTable(tableName, data, primary);
 }
 
 void Interpreter::createIndex(int i){
@@ -141,6 +218,7 @@ void Interpreter::insertRecord(int i){
     std::string tableName;
     std::string value;
     element e;
+    Tuple tupleToInsert;
     int k;
     if(getWord(i)!="into"){
         throw 1;
@@ -196,11 +274,16 @@ void Interpreter::insertRecord(int i){
                     throw 1;
                 }
                 e.stringT=value.substr(1,value.length()-2);
+                break;
             }
         }
+        tupleToInsert.addData(e);
     }
-    
-    
+    if(k+1!=data.size()){
+        std::cout<<"attribute number error."<<std::endl;
+        throw 1;
+    }
+    API.insertRecord(tableName, tupleToInsert);
 }
 
 void Interpreter::execFile(int i){
@@ -236,4 +319,26 @@ std::string Interpreter::getWord(int &i){
     }
     i--;
     return queryString.substr(i-k,k);
+}
+
+int Interpreter::getType(int &i){
+    std::string type;
+    type=getWord(i);
+    if(type=="int"){
+        return -1;
+    }
+    else if(type=="float"){
+        return 0;
+    }
+    else if(type=="char"){
+        if(getWord(i)!="(")
+            throw 1;
+        std::string tmp=getWord(i);
+        if(getWord(i)!=")")
+            throw 1;
+        return strToNum<int>(tmp);
+    }
+    else{
+        throw 1;
+    }
 }

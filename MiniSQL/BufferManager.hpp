@@ -67,6 +67,8 @@ class BufferManager {
         int flushPage(int page_id , std::string file_name , int block_id);
         // 获取对应文件的对应块在内存中的页号，没有找到返回-1
         int getPageId(std::string file_name , int block_id);
+        //交换两个块的位置并丢弃末尾的块
+        void dropPage(int id);
     private:
         Page* Frames;//缓冲池，实际上就是一个元素为Page的数组，实际内存空间将分配在堆上
         int frame_size_;//记录总页数
@@ -74,7 +76,7 @@ class BufferManager {
         void initialize(int frame_size);//实际初始化函数
         // 获取一个闲置的页的页号(内部封装了时钟替换策略，但使用者不需要知道这些)
         int getEmptyPageId();
-        // 讲对应文件的对应块载入对应内存页，对于文件不存在返回-1，否则返回0
+        // 将对应文件的对应块载入对应内存页，对于文件不存在返回-1，否则返回0
         int loadDiskBlock(int page_id , std::string file_name , int block_id);
 };
 
