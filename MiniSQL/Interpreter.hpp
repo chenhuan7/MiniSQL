@@ -27,17 +27,18 @@ public:
     void read();
     void selectRecord(int i);
     void deleteRecord(int i);
-    void dropTable(int i);
-    void dropIndex(int i);
-    void createTable(int i);
-    void createIndex(int i);
-    void insertRecord(int i);
-    void execFile(int i);
-    void exitMiniSQL();
+    void dropTable(int i);//
+    void dropIndex(int i);//
+    void createTable(int i);//
+    void createIndex(int i);//
+    void insertRecord(int i);//
+    void execFile(int i);//
+    void exitMiniSQL();//
     
 private:
     std::string queryString;
     std::string getWord(int &i);
+    int getType(int &i);
     
 };
 template <class Type>
