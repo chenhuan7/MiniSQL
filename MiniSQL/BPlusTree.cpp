@@ -185,6 +185,6 @@ bool BPlusTree<T>::adjustAfterinsert(TreeNode<T> *pNode) {
 }
 
 template <typename T>
-bool TreeNode<T>::deleteKey(const T &key) {
+bool BPlusTree<T>::deleteKey(const T &key) {
     
 }
