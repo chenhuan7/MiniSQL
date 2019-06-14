@@ -21,8 +21,9 @@ public:
     void clear();
     bool insertKey(const T &key, int value);
     bool insertKey(const T &key);
+    void insert(int childIndex,const T &key, TreeNode *childNode);
     bool deleteKey(const T &key);
-    void split(int childIndex);
+    TreeNode<T> *split(T key);
     
 private:
     bool isLeaf;
@@ -31,7 +32,6 @@ private:
     TreeNode *nextLeaf;
     
     int getKeyIndex(const T &key);
-    void insert(int childIndex,const T &key, TreeNode *childNode);
     bool findKey(const T &key, TreeNode *p);
 };
 
