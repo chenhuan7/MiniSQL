@@ -29,7 +29,7 @@ bool CatalogManager::createTable(std::string tableName, const std::vector<Attrib
     str_tmp=str_tmp+" "+num2str(data.size, 2);
     //添加每个attribute的信息，顺序为类型，名字，是否为唯一
     for(int i=0;i<data.size;i++)
-        str_tmp=str_tmp+" "+num2str(data[i].type, 1)+" "+data[i].name+" "+(data[i].isUnique==true?"1":"0");
+        str_tmp=str_tmp+" "+num2str(data[i].type, 1)+" "+num2str(data[i].length, 2)+' '+data[i].name+" "+(data[i].isUnique==true?"1":"0");
     //添加主键信息
     str_tmp=str_tmp+" "+num2str(primary, 2);
 
@@ -66,6 +66,8 @@ bool CatalogManager::dropTable(std::string tableName)
         char* buffer = bufferManager.getPage(TABLE_MANAGER_PATH , current_block);
         int pageID = bufferManager.getPageId(TABLE_MANAGER_PATH , current_block);
 
+        if (buffer[0]!='T')
+            continue;
         if (checkTableName(buffer,tableName))
         {
             bufferManager.dropPage(pageID);
@@ -74,6 +76,73 @@ bool CatalogManager::dropTable(std::string tableName)
             bufferManager.modifyPage(pageID);    
         }
     }
+}
+
+bool CatalogManager::getAttribute(std::string tableName, std::vector<AttributeType> &data)
+{
+    if (!hasTable(tableName))
+        return false;
+    
+    for(int current_block=0;current_block<blockNum;current_block++)
+    {
+        char* buffer = bufferManager.getPage(TABLE_MANAGER_PATH , current_block);
+        int pageID = bufferManager.getPageId(TABLE_MANAGER_PATH , current_block);
+        std::string buffer_check(buffer);
+        if (buffer[0]!='T')
+            continue;
+        if (checkTableName(buffer,tableName))
+        {
+           int index=0;
+           while (buffer[index]!=' ')
+                index++;
+           index++;
+
+           std::string attr_num=buffer_check.substr(index,2);
+           int num=str2num(attr_num);
+           index+=3;
+
+           for (int i=0;i<num;i++)
+           {
+                AttributeType tmp;
+                std::string type=buffer_check.substr(index,1);
+                tmp.type=str2num(type);
+                std::string l=buffer_check.substr(index+2,2);
+                tmp.length=str2num(l);
+                index+=5;
+               
+                int length=0;
+                while (buffer[length+index]!=' ')
+                    length++;
+                tmp.name=buffer_check.substr(index,length);
+                index+=length+1;
+
+                if (buffer[index]=='0')
+                    tmp.isUnique=false;
+                else tmp.isUnique=true;
+
+                data.push_back(tmp);
+                index+=2;
+           }
+           return true;
+        }
+    }
+    return false;
+}
+
+bool CatalogManager::hasAttribute(std::string tableName , std::string attrName)
+{
+    std::vector<AttributeType> data;
+    if (!getAttribute(tableName,data))
+    {
+        return false;
+    }
+
+    for (int i=0; i<data.size; i++)
+    {
+        if (tableName==data[i].name)
+            return true;
+    }
+    return false;
 }
 
 bool CatalogManager::hasTable(std::string tableName)
@@ -103,69 +172,16 @@ bool CatalogManager::checkTableName(std::string buffer, std::string tableName)
         return true;
     else return false;
 }
+
+
 /* 
-bool CatalogManager::hasTable(std::string table_name){
-    //计算块的数量
-    int block_num=getBlockNum(TABLE_MANAGER_PATH)/PAGESIZE;
-    if(block_num<=0)
-        block_num=1;
-    //遍历所有的块
-    for(int current_block=0;current_block<block_num;current_block++){
-        char* buffer = buffer_manager.getPage(TABLE_MANAGER_PATH , current_block);
-        std::string buffer_check(buffer);
-        std::string str_tmp="";
-        int start_index=0,end_index=0;
-        do{
-            //如果一开始就是#，则检查下一块
-            if(buffer_check[0]=='#')
-                break;
-            //得到table的名字，如果与输入的名字相同，则return true
-            else if(getTableName(buffer, start_index, end_index)==table_name){
-                return true;
-            }
-            else{
-                //通过字符串长度来重新确定下一个table的位置
-                start_index+=str2num(buffer_check.substr(start_index,4));
-                //排除空文档的特殊条件
-                if(!start_index)
-                    break;
-            }
-        }while(buffer_check[start_index]!='#');  //判断是否到头
-    }
-    return false;
-}
-bool CatalogManager::dropTable(const std::string &tableName){
-    if(!hasTable(tableName)){
-        std::cout<<"table not exist!"<<std::endl;
-        return false;
-    }
-    else{
-        
-        
-        
-        
-        return true;
-    }
-}
 bool CatalogManager::createIndex(const std::string &tableName, const std::string &indexName, int attributeIndex){
     
 }
 bool CatalogManager::dropIndex(const std::string &indexName){
     
 }
-//验证是否存在表
-bool CatalogManager::hasTable(const std::string &tableName){
-    std::ifstream fin((tableName).c_str());
-    std::string header;
-    if (!fin) return false;
-    
-    fin >> header;
-    fin.close();
-    if(tableName == header)
-        return true;
-    else
-        return false;
-}
+
 Table* CatalogManager::loadTable(const std::string &tableName){
     if(!hasTable(tableName)){
         std::cout<<"no table"<<std::endl;
@@ -192,4 +208,8 @@ std::string CatalogManager::num2str(int num,short bit){
         divisor/=10;
     }
     return str;
+}
+
+int CatalogManager::str2num(std::string str){
+    return atoi(str.c_str());
 }
