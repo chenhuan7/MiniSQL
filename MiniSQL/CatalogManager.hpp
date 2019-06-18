@@ -35,12 +35,34 @@ class CatalogManager {
 public:
     //初始化函数
     CatalogManager();
-    //输入：表名，属性对象，主键编号，索引对象
+    //输入：表名，属性对象，主键编号，索引对象(暂无)
     //输出：void
-    //功能：在catalog文件中插入一个表的元信息
+    //功能：在catalog文件中插入一个表的元信息。成功返回true，失败返回false（表已经存在）
     //异常：如果已经有相同表名的表存在，则抛出table_exist异常
     bool createTable(std::string tableName, const std::vector<AttributeType> &data, int primary);
+    //输入：表名
+    //输出：void
+    //功能：在catalog文件中删除一个表的元信息，成功返回true，失败返回false（表不存在）
     bool dropTable(std::string tableName);
+    //输入：表名
+    //输出：bool
+    //功能：查找对应表是否存在，存在返回true，不存在返回false
+    bool hasTable(std::string table_name);
+
+    //输入：表名
+    //输出：属性对象
+    //功能：获取一个表的属性
+    //异常：如果表不存在，抛出table_not_exist异常
+    bool getAttribute(std::string tableName,  std::vector<AttributeType> &data);
+
+    //输入：表名，属性名
+    //输出：bool
+    //功能：查找对应表中是否有某一属性，如果有返回true，如果没有返回false
+    //异常：如果表不存在，抛出table_not_exist异常
+    bool hasAttribute(std::string tableName , std::string attrName);
+
+    
+
     /* Table* createTable(const std::string &tableName, const std::vector<AttributeType> &data);
     bool dropTable(const std::string &tableName);
     bool createIndex(const std::string &tableName, const std::string &indexName, int attributeIndex);
@@ -54,8 +76,8 @@ public:
     //IndexTableManager IM;*/
 private:
     int blockNum;
-    bool CatalogManager::hasTable(std::string table_name);
-    bool CatalogManager::checkTableName(std::string buffer, std::string tableName);
+    bool checkTableName(std::string buffer, std::string tableName);
+    int str2num(std::string str);
     std::string num2str(int num,short bit);
 };
 
@@ -63,30 +85,7 @@ private:
 
 
 /* 
-extern BufferManager buffer_manager;
 
-class CatalogManager{
-public:
-    //输入：表名，属性对象，主键编号，索引对象
-    //输出：void
-    //功能：在catalog文件中插入一个表的元信息
-    //异常：如果已经有相同表名的表存在，则抛出table_exist异常
-    void createTable(std::string table_name, Attribute attribute, int primary, Index index);
-    //输入：表名
-    //输出：void
-    //功能：在catalog文件中删除一个表的元信息
-    //异常：如果表不存在，抛出table_not_exist异常
-    void dropTable(std::string table_name);
-    //输入：表名
-    //输出：bool
-    //功能：查找对应表是否存在，存在返回true，不存在返回false
-    //异常：无异常
-    bool hasTable(std::string table_name);
-    //输入：表名，属性名
-    //输出：bool
-    //功能：查找对应表中是否有某一属性，如果有返回true，如果没有返回false
-    //异常：如果表不存在，抛出table_not_exist异常
-    bool hasAttribute(std::string table_name , std::string attr_name);
     //输入：表名
     //输出：属性对象
     //功能：获取一个表的属性
