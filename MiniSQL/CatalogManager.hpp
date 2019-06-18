@@ -47,14 +47,14 @@ public:
     //输入：表名
     //输出：bool
     //功能：查找对应表是否存在，存在返回true，不存在返回false
-    bool CatalogManager::hasTable(std::string table_name);
+    bool hasTable(std::string table_name);
 
     //输入：表名
     //输出：属性对象
     //功能：获取一个表的属性
     //异常：如果表不存在，抛出table_not_exist异常
-    bool CatalogManager::getAttribute(std::string tableName,  std::vector<AttributeType> &data);
-    
+    bool getAttribute(std::string tableName,  std::vector<AttributeType> &data);
+
     //输入：表名，属性名
     //输出：bool
     //功能：查找对应表中是否有某一属性，如果有返回true，如果没有返回false
@@ -76,8 +76,8 @@ public:
     //IndexTableManager IM;*/
 private:
     int blockNum;
-    bool CatalogManager::checkTableName(std::string buffer, std::string tableName);
-    int CatalogManager::str2num(std::string str);
+    bool checkTableName(std::string buffer, std::string tableName);
+    int str2num(std::string str);
     std::string num2str(int num,short bit);
 };
 
