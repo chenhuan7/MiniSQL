@@ -21,7 +21,7 @@
 #include <iomanip>
 #include "BufferManager.hpp"
 #include "MiniSQL.h"
-
+#include "IndexManager.hpp"
 // 每一页的大小为4KB
 #define PAGESIZE 4096
 // 最大页数为100
@@ -61,42 +61,12 @@ public:
     //异常：如果表不存在，抛出table_not_exist异常
     bool hasAttribute(std::string tableName , std::string attrName);
 
-    
-
-    /* Table* createTable(const std::string &tableName, const std::vector<AttributeType> &data);
-    bool dropTable(const std::string &tableName);
-    bool createIndex(const std::string &tableName, const std::string &indexName, int attributeIndex);
-    bool dropIndex(const std::string &indexName);
-    
-    bool hasTable(const std::string &tableName);
-    Table* loadTable(const std::string &tableName);
-    bool hasIndex(const std::string &indexName);
-    //bool createIndex(const std::string &tableName, const std::string &indexName, int attrIndex);
-    std::pair<std::string, int> getIndex(const std::string &indexName);
-    //IndexTableManager IM;*/
-private:
-    int blockNum;
-    bool checkTableName(std::string buffer, std::string tableName);
-    int str2num(std::string str);
-    std::string num2str(int num,short bit);
-};
-
-#endif /* CatalogManager_hpp */
-
-
-/* 
-
-    //输入：表名
-    //输出：属性对象
-    //功能：获取一个表的属性
-    //异常：如果表不存在，抛出table_not_exist异常
-    Attribute getAttribute(std::string table_name);
-    //输入：表名，属性名，索引名
+     //输入：表名，属性名，索引名
     //输出：void
     //功能：在catalog文件中更新对应表的索引信息（在指定属性上建立一个索引）
     //异常：如果表不存在，抛出table_not_exist异常。如果对应属性不存在，抛出attribute_not_exist异常。
     //如果对应属性已经有了索引，抛出index_exist异常。
-    void createIndex(std::string table_name,std::string attr_name,std::string index_name);
+    bool createIndex(std::string table_name,std::string attr_name,std::string index_name);
     //输入：表名，索引名
     //输出：索引所对应的属性名
     //功能：通过索引名定位属性名
@@ -107,25 +77,14 @@ private:
     //功能：删除对应表的对应属性上的索引
     //异常：如果表不存在，抛出table_not_exist异常。如果对应属性不存在，抛出attribute_not_exist异常。
     //如果对应属性没有索引，抛出index_not_exist异常。
-    void dropIndex(std::string table_name,std::string index_name);
-    //输入：表名
-    //输出：void
-    //功能：显示表的信息
-    //异常：如果表不存在，抛出table_not_exist异常
-    void showTable(std::string table_name);
-private:
-    //数字转字符串，bit为数的位数
-    std::string num2str(int num,short bit);
-    //字符串转数字
-    int str2num(std::string str);
-    //得到该行的表的名字
-    std::string getTableName(std::string buffer,int start,int &rear);
-    //返回表在文件中的位置,返回具体位置，引用传出数据所在的块信息
-    int getTablePlace(std::string name,int &suitable_block);
-    //返回该表的index
+    bool dropIndex(std::string table_name,std::string index_name);
+
     Index getIndex(std::string table_name);
-    //获取文件大小
-    int getBlockNum(std::string table_name);
+private:
+    int blockNum;
+    bool checkTableName(std::string buffer, std::string tableName);
+    int str2num(std::string str);
+    std::string num2str(int num,short bit);
 };
 
-#endif /* catalog_hpp */ 
+#endif /* CatalogManager_hpp */

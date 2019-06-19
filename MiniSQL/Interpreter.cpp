@@ -36,7 +36,7 @@ void Interpreter::query(){
     }
     queryString.insert(queryString.length()-2," ");
     transform(queryString.begin(), queryString.end(), queryString.begin(), ::tolower);
-
+    
     int i=0;
     while(queryString[i++]==' ');
     i--;
@@ -81,7 +81,121 @@ void Interpreter::query(){
 }
 
 void Interpreter::selectRecord(int i){
-    
+    API API;
+    CatalogManager CM;
+    std::string tableName;
+    std::vector<std::string> atttributeName;
+    std::vector<std::string> targetName;
+    std::vector<condition> conditions;
+    condition tmpCondition;
+    std::string tmp;
+    Table outTable;
+    int op;
+    bool flag;
+    tmp=getWord(i);
+    if(tmp=="*"){
+        flag=true;
+        tmp=getWord(i);
+    }else{
+        flag=false;
+        atttributeName.push_back(tmp);
+        tmp=getWord(i);
+        while(tmp==","){
+            atttributeName.push_back(getWord(i));
+            tmp=getWord(i);
+        }
+    }
+    if(tmp!="from"){
+        throw 1;
+    }
+    tableName=getWord(i);
+    std::vector<AttributeType> attributes=CM.getAttribute(tableName);
+    if(flag){
+        for(int k;k<attributes.size();k++){
+            atttributeName.push_back(attributes[k].name);
+        }
+    }
+    tmp=getWord(i);
+    if(tmp=="where"){
+        while(1){
+            std::string tmp_target=getWord(i);
+            targetName.push_back(tmp_target);
+            tmp=getWord(i);
+            std::string tmp2=getWord(i);
+            std::string key;
+            if(tmp2=="="||tmp2==">"){
+                tmp+=tmp2;
+                key=getWord(i);
+            }
+            else{
+                key=tmp2;
+            }
+            if(tmp=="<")
+                tmpCondition.relation=LESS;
+            else if(tmp=="<=")
+                tmpCondition.relation=LESS_OR_EQUAL;
+            else if(tmp=="=")
+                tmpCondition.relation=EQUAL;
+            else if(tmp==">=")
+                tmpCondition.relation=MORE_OR_EQUAL;
+            else if(tmp==">")
+                tmpCondition.relation=MORE;
+            else if(tmp=="!="||tmp=="<>")
+                tmpCondition.relation=NOT_EQUAL;
+            else
+                throw 1;
+            std::string tmp_key=getWord(i);
+            for(int k;k<attributes.size();k++){
+                if(attributes[k].name==tmp_target){
+                    tmpCondition.e.type=attributes[k].type;
+                    switch(attributes[k].type){
+                        case -1:{
+                            try{
+                                tmpCondition.e.intT=strToNum<int>(key);
+                            }catch(...){
+                                throw 1;
+                            }
+                            break;
+                        }
+                        case 0:{
+                            try{
+                                tmpCondition.e.floatT=strToNum<float>(key);
+                            }catch(...){
+                                throw 1;
+                            }
+                            break;
+                        }
+                        default:{
+                            try{
+                                tmpCondition.e.stringT=key;
+                            }catch(...){
+                                throw 1;
+                            }
+                            break;
+                        }
+                    }
+                    
+                    break;
+                }
+            }
+            conditions.push_back(tmpCondition);
+            tmp=getWord(i);
+            if(tmp==";"){
+                break;
+            }
+            else if(tmp=="and"){
+                op=1;
+            }
+            else if(tmp=="or"){
+                op=0;
+            }
+            
+        }
+        outTable=API.selectRecord(tableName, conditions,op);
+    }
+    else{
+        
+    }
 }
 
 void Interpreter::deleteRecord(int i){
@@ -89,6 +203,7 @@ void Interpreter::deleteRecord(int i){
     CatalogManager CM;
     condition conditions;
     std::string tableName;
+    std::string attributeName;
     if(getWord(i)!="from"){
         throw 1;
     }
@@ -102,6 +217,67 @@ void Interpreter::deleteRecord(int i){
     if(getWord(i)!="where"){
         throw 1;
     }
+    attributeName=getWord(i);
+    tmp=getWord(i);
+    std::string tmp2=getWord(i);
+    std::string key;
+    if(tmp2=="="||tmp2==">"){
+        tmp+=tmp2;
+        key=getWord(i);
+    }
+    else{
+        key=tmp2;
+    }
+    if(tmp=="<")
+        conditions.relation=LESS;
+    else if(tmp=="<=")
+        conditions.relation=LESS_OR_EQUAL;
+    else if(tmp=="=")
+        conditions.relation=EQUAL;
+    else if(tmp==">=")
+        conditions.relation=MORE_OR_EQUAL;
+    else if(tmp==">")
+        conditions.relation=MORE;
+    else if(tmp=="!="||tmp=="<>")
+        conditions.relation=NOT_EQUAL;
+    else
+        throw 1;
+    std::vector<AttributeType> attributes=CM.getAttribute(tableName);
+    for(int k;k<attributes.size();k++){
+        if(attributes[k].name==attributeName){
+            conditions.e.type=attributes[k].type;
+            switch(attributes[k].type){
+                case -1:{
+                    try{
+                        conditions.e.intT=strToNum<int>(key);
+                    }catch(...){
+                        throw 1;
+                    }
+                    break;
+                }
+                case 0:{
+                    try{
+                        conditions.e.floatT=strToNum<float>(key);
+                    }catch(...){
+                        throw 1;
+                    }
+                    break;
+                }
+                default:{
+                    try{
+                        conditions.e.stringT=key;
+                    }catch(...){
+                        throw 1;
+                    }
+                    break;
+                }
+            }
+            
+            break;
+        }
+    }
+    API.deleteRecord(tableName, attributeName, conditions);
+    
 }
 
 void Interpreter::dropTable(int i){
@@ -290,7 +466,7 @@ void Interpreter::execFile(int i){
     std::string tmp;
     std::string filePath;
     filePath=getWord(i);
-
+    
     std::fstream fs(filePath);
     std::stringstream ss;
     ss<<fs.rdbuf();
