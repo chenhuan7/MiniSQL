@@ -32,9 +32,10 @@ class Table {
 private:
     int size;
     std::string name;
-    std::vector<AttributeType> data;
     int block;
 public:
+    std::vector<AttributeType> data;
+    std::vector<tuple> Tuple;
     Table(const std::string &name, const std::vector<AttributeType> data){
         this->size=0;
         this->name=name;
@@ -65,6 +66,7 @@ public:
     
 };
 class element{
+public:
     int intT;
     float floatT;
     std::string stringT;
@@ -136,7 +138,34 @@ class element{
         return !(*this == x);
     }
 };
+class Tuple{
+private:
+    std::vector<element> data;
+    bool isDeleted;
+public:
+    Tuple() : isDeleted(false) {};
+    Tuple(const Tuple &tuple_in);  //拷贝元组
+    void addData(element data_in);  //新增元组
+    std::vector<element> getData() const;  //返回数据
+    int getSize();  //返回元组的数据数量
+    bool isDel();
+    void setDeleted();
+    void showTuple();  //显示元组中的所有数据
+};
 
+typedef enum{
+    LESS,
+    LESS_OR_EQUAL,
+    EQUAL,
+    MORE_OR_EQUAL,
+    MORE,
+    NOT_EQUAL
+} CONDITION;
+
+struct condition{
+    element e;
+    CONDITION relation;
+};
 
 
 #endif /* MiniSQL_h */

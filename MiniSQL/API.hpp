@@ -16,19 +16,22 @@
 
 class API{
 public:
+    API();
+    ~API();
+    
     void createTable(const std::string &tableName, const std::vector<AttributeType> &data, int primaryKey);
     void dropTable(const std::string &tableName);
-    void createIndex(const std::string &tableName, const std::string &indexName, const std::string &attributeName);
-    void dropIndex(const std::string &indexName);
-    void selectRecord(const std::string &tableName, const std::vector<std::string> &condition);
-    void insertRecord(const std::string &tableName, const std::vector<std::string> &value);
-    void deleteRecord(const std::string &tableName, const std::vector<std::string> &condition);
+    void createIndex(std::string tableName, std::string indexName, std::string attr_name);
+    void dropIndex(std::string tableName, std::string indexName);
+    Table selectRecord(const std::string &tableName, const std::vector<std::string> targetName,const std::vector<std::string> &condition,int op);
+    void insertRecord(const std::string &tableName, Tuple& tuple);
+    void deleteRecord(const std::string &tableName, const std::string targetName,const condition &condition);
     CatalogManager catalogManager;
     RecordManager recordManager;
     IndexManager indexManager;
-    
-private:
-    
+    Table unionTable(Table &table1, Table &table2, std::string target_attr, condition where);
+    Table joinTable(Table &table1, Table &table2, std::string target_attr, condition where);
+
 };
 
 #endif /* API_hpp */
