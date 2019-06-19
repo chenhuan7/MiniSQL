@@ -173,28 +173,73 @@ bool CatalogManager::checkTableName(std::string buffer, std::string tableName)
     else return false;
 }
 
-
-/* 
-bool CatalogManager::createIndex(const std::string &tableName, const std::string &indexName, int attributeIndex){
+bool CatalogManager::createIndex(std::string table_name,std::string attr_name,std::string index_name){
+    //异常判断
+    if(!hasTable(table_name))
+        return false;
+    if(!hasAttribute(table_name, attr_name))
+        return false;
+    Index index_record=getIndex(table_name);
+    if(index_record.num>=10)
+        return false;
     
-}
-bool CatalogManager::dropIndex(const std::string &indexName){
-    
-}
-
-Table* CatalogManager::loadTable(const std::string &tableName){
-    if(!hasTable(tableName)){
-        std::cout<<"no table"<<std::endl;
-        return NULL;
+    std::vector<AttributeType> data;
+    getAttribute(table_name, data);
+    //遍历所有已有的index
+    for(int i=0;i<index_record.num;i++){
+        //索引名重复错误
+        if(index_record.indexname[i]==index_name)
+            return false;
+        //索引重复
+        if(data[i].name==attr_name)
+            return false;
     }
+    int key;
+
+    index_record.indexname[index_record.num]=index_name;
+    for(int index=0;index<data.size;index++){
+        if(attr_name==data[index].name)
+        {
+            index_record.location[index_record.num]=index;
+            break;
+        }
+    }
+    index_record.num++;
+    //刷新
+    dropTable(table_name);
+    createTable(table_name, data, key);
 }
-bool CatalogManager::hasIndex(const std::string &indexName){
-    
+
+bool CatalogManager::dropIndex(std::string table_name,std::string index_name){
+    //如果不存在该索引，则异常
+    if(!hasTable(table_name)){
+        return false;
+    }
+    //得到该表的index的信息
+    Index index_record=getIndex(table_name);
+    //得到属性的信息
+    std::vector<AttributeType> data;
+    getAttribute(table_name, data);
+    //遍历所有的index，查找是否有对应名字的索引，如果不存在则异常
+    int hasindex=-1;
+    for(int index=0;index<index_record.num;index++){
+        if(index_record.indexname[index]==index_name){
+            hasindex=index;
+            break;
+        }
+    }
+    if(hasindex==-1){
+        return false;
+    }
+    int key;
+    //通过将该信息与最后位置的索引替换的方式来删除索引
+    index_record.indexname[hasindex]=index_record.indexname[index_record.num-1];
+    index_record.location[hasindex]=index_record.location[index_record.num-1];
+    index_record.num--;
+    //在原有表中删除该表后再插入，实现刷新
+    dropTable(table_name);
+    createTable(table_name, data, key);
 }
-//bool createIndex(const std::string &tableName, const std::string &indexName, int attrIndex);
-std::pair<std::string, int> getIndex(const std::string &indexName);
-//IndexTableManager IM;
-*/
 
 std::string CatalogManager::num2str(int num,short bit){
     std::string str="";
@@ -212,4 +257,30 @@ std::string CatalogManager::num2str(int num,short bit){
 
 int CatalogManager::str2num(std::string str){
     return atoi(str.c_str());
+}
+
+Index CatalogManager::getIndex(std::string table_name){
+    Index index_record;
+    //得到该表的位置和对应的块
+    int suitable_block;
+    int start_index=(table_name,suitable_block);
+    char* buffer = bufferManager.getPage(TABLE_MANAGER_PATH , suitable_block);
+    //将start_index对齐索引信息的位置
+    std::string buffer_check(buffer);
+    while(buffer_check[start_index]!=';')
+        start_index++;
+    start_index++;
+    //得到索引的数量
+    index_record.num=str2num(buffer_check.substr(start_index,2));
+    //得到索引的所有信息
+    for(int times=0;times<index_record.num;times++){
+        start_index+=3;
+        index_record.location[times]=str2num(buffer_check.substr(start_index,2));
+        start_index+=3;
+        while(buffer_check[start_index]!=' '&&buffer_check[start_index]!='#'&&buffer_check[start_index]!='\n'){
+            index_record.indexname[times]+=buffer_check[start_index++];
+        }
+        start_index-=2;
+    }
+    return index_record;
 }

@@ -35,7 +35,7 @@ private:
     int block;
 public:
     std::vector<AttributeType> data;
-    std::vector<tuple> Tuple;
+    std::vector<Tuple> Tuple;
     Table(const std::string &name, const std::vector<AttributeType> data){
         this->size=0;
         this->name=name;
@@ -167,5 +167,10 @@ struct condition{
     CONDITION relation;
 };
 
-
+struct Index{
+    int num;  //index的总数
+    short location[10];  //每个index在Attribute的name数组中是第几个
+    std::string indexname[10];  //每个index的名字
+};
 #endif /* MiniSQL_h */
+
