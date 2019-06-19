@@ -16,8 +16,8 @@ class IndexManager {
 public:
     void createIndex(const std::string &indexName, int type);
     void dropIndex(const std::string &indexName);
-    void insertIndex(const std::string &indexName, const element &e, long offset);
-    int findIndex(const std::string &indexName);
+    bool insertIndex(const std::string &indexName, const element &e, long offset);
+    int findIndex(const std::string &indexName, element e);
     void deleteIndex(const std::string &indexName, const element &e);
     void searchRange(const std::string &indexName, element data1, element data2, std::vector<int>& values);
     

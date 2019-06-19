@@ -16,6 +16,8 @@ public:
     TreeNode *parent;
     std::vector<T> keys;
     std::vector<TreeNode*> childs;
+    std::vector<int> values;
+    TreeNode *nextLeaf;
     
     TreeNode(TreeNode *Parent=NULL, bool Leaf=false);
     void clear();
@@ -23,16 +25,13 @@ public:
     bool insertKey(const T &key);
     void insert(int childIndex,const T &key, TreeNode *childNode);
     bool deleteKey(const T &key);
-    TreeNode<T> *split(T key);
+    TreeNode<T>* findKey(const T &key, int &index);
+    TreeNode<T>* split(T key);
+    int getKeyIndex(const T &key);
     
 private:
     bool isLeaf;
     int degree;
-    std::vector<int> values;
-    TreeNode *nextLeaf;
-    
-    int getKeyIndex(const T &key);
-    bool findKey(const T &key, TreeNode *p);
 };
 
 template <typename T>
@@ -42,6 +41,8 @@ public:
     ~BPlusTree();
     bool insertKey(const T &key, int value);
     bool deleteKey(const T &key);
+    int searchVal(const T &key);
+    void searchRange(T data1, T data2, std::vector<int> &vals);
     
 private:
     typedef TreeNode<T>* Tree;

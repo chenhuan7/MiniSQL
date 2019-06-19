@@ -60,9 +60,120 @@ void IndexManager::dropIndex(const std::string &indexName){
     return;
 }
 
-void IndexManager::insertIndex(const std::string &indexName, const element &e, long offset) {
-    if(e.type == TYPE_INT) {
-        
+bool IndexManager::insertIndex(const std::string &indexName, const element &e, long offset) {
+    if (e.type<-1) {
+        return false;
+    }
+    switch (e.type) {
+        case TYPE_INT: {
+            intMap::iterator itInt = indexIntMap.find(indexName);
+            if (itInt == indexIntMap.end()) {
+                return false;
+            }
+            delete itInt->second;
+            indexIntMap.erase(itInt);
+            break;
+        }
+        case TYPE_FLOAT: {
+            floatMap::iterator itFloat = indexFloatMap.find(indexName);
+            if (itFloat == indexFloatMap.end()) {
+                return false;
+            }
+            delete itFloat->second;
+            indexFloatMap.erase(itFloat);
+            break;
+        }
+        default: {
+            stringMap::iterator itString = indexStringMap.find(indexName);
+            if (itString == indexStringMap.end()) {
+                return false;
+            }
+            delete itString->second;
+            indexStringMap.erase(itString);
+            break;
+        }
+    }
+    return true;
+}
+
+void IndexManager::deleteIndex(const std::string &indexName, const element &e) {
+    if (e.type < -1)
+        return;
+    switch (e.type) {
+        case TYPE_INT: {
+            intMap::iterator itInt = indexIntMap.find(indexName);
+            itInt->second->deleteKey(e.intT);
+            break;
+        }
+        case TYPE_FLOAT: {
+            floatMap::iterator itFloat = indexFloatMap.find(indexName);
+            itFloat->second->deleteKey(e.floatT);
+            break;
+        }
+        default: {
+            stringMap::iterator itString = indexStringMap.find(indexName);
+            itString->second->deleteKey(e.stringT);
+            break;
+        }
+    }
+    return;
+}
+
+int IndexManager::findIndex(const std::string &indexName, element e) {
+    if (e.type < -1) {
+        return -1;
+    }
+    switch (e.type) {
+        case TYPE_INT:{
+            intMap::iterator itInt = indexIntMap.find(indexName);
+            if (itInt == indexIntMap.end())
+                return -1;
+            return itInt->second->searchVal(e.intT);
+            break;
+        }
+        case TYPE_FLOAT:{
+            floatMap::iterator itFloat = indexFloatMap.find(indexName);
+            if (itFloat == indexFloatMap.end())
+                return -1;
+            return itFloat->second->searchVal(e.floatT);
+            break;
+        }
+        default:{
+            stringMap::iterator itString = indexStringMap.find(indexName);
+            if (itString == indexStringMap.end())
+                return -1;
+            return itString->second->searchVal(e.stringT);
+            break;
+        }
+    }
+    return 0;
+}
+
+void IndexManager::searchRange(const std::string &indexName, element data1, element data2, std::vector<int> &values) {
+    if (data1.type != data2.type)
+        return;
+    switch (data1.type) {
+        case TYPE_INT:{
+            intMap::iterator itInt = indexIntMap.find(indexName);
+            if (itInt == indexIntMap.end())
+                return;
+            itInt->second->searchRange(data1.intT, data2.intT, values);
+            break;
+        }
+        case TYPE_FLOAT:{
+            floatMap::iterator itFloat = indexFloatMap.find(indexName);
+            if (itFloat == indexFloatMap.end())
+                return;
+            itFloat->second->searchRange(data1.floatT, data2.floatT, values);
+            break;
+        }
+        default:{
+            stringMap::iterator itString = indexStringMap.find(indexName);
+            if (itString == indexStringMap.end())
+                return;
+            itString->second->searchRange(data1.stringT, data2.stringT, values);
+            break;
+        }
     }
     return;
 }

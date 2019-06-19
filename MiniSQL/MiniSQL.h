@@ -65,6 +65,7 @@ public:
     
 };
 class element{
+public:
     int intT;
     float floatT;
     std::string stringT;

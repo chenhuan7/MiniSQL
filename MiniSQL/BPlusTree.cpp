@@ -26,8 +26,9 @@ bool BPlusTree<T>::insertKey(const T &key, int value) {
     if (!root) {
         root = new TreeNode<T>;
     }
-    TreeNode<T> *p=root;
-    if (root->findKey(key, p)) {
+    int index;
+    TreeNode<T> *p = root->findKey(key, index);
+    if (!p) {
         return false;
     }
     p->insertKey(key, value);
@@ -69,20 +70,20 @@ int TreeNode<T>::getKeyIndex(const T &key) {
 }
 
 template <typename T>
-bool TreeNode<T>::findKey(const T &key, TreeNode *p) {
+TreeNode<T>* TreeNode<T>::findKey(const T &key, int &index) {
     if (!keys.size()) {
-        return false;
+        return this;
     }
     if (keys[0]>key || keys[keys.size()-1]<key){
-        return false;
+        return this;
     }
-    int index = getKeyIndex(key);
+    index = getKeyIndex(key);
     if (keys[index] == key) {
-        return true;
+        return this;
     }
     if (isLeaf)
-        return false;
-    return childs[index]->findKey(key, p);
+        return this;
+    return childs[index]->findKey(key);
 }
 
 template <typename T>
@@ -123,11 +124,6 @@ void TreeNode<T>::insert(int childIndex,const T &key, TreeNode *childNode) {
     keys.insert(keys.begin()+childIndex, key);
     childs.insert(childs.begin()+childIndex, childNode);
 }
-
-//template <typename T>
-//void TreeNode<T>::mergeChild() {
-//    insert(<#int childIndex#>, <#const T &key#>, <#TreeNode<T> *childNode#>)
-//}
 
 template <typename T>
 bool TreeNode<T>::insertKey(const T &key, int value) {
@@ -186,5 +182,41 @@ bool BPlusTree<T>::adjustAfterinsert(TreeNode<T> *pNode) {
 
 template <typename T>
 bool BPlusTree<T>::deleteKey(const T &key) {
-    
+    int index;
+    TreeNode<T> *p=root->findKey(key, index);
+    if (!p)
+        return false;
+    if (p->keys[index] != key)
+        return false;
+    p->keys[index] = -1;
+    return true;
+}
+
+template <typename T>
+int BPlusTree<T>::searchVal(const T &key) {
+    int index;
+    TreeNode<T> *p=root->findKey(key, index);
+    if (!p) {
+        return -1;
+    }
+    if (p->keys[index] != key) {
+        return -1;
+    }
+    return p->values[index];
+}
+
+template <typename T>
+void BPlusTree<T>::searchRange(T data1, T data2, std::vector<int> &vals) {
+    int stIndex, edIndex;
+    TreeNode<T> *pNode=root->findKey(data1, stIndex);
+    TreeNode<T> *edNode=root->findKey(data2, edIndex);
+    while (pNode!=edNode) {
+        for (int i=stIndex; i<pNode->values.size(); ++i)
+            vals.push_back(pNode->values[i]);
+        pNode = pNode->nextLeaf;
+        stIndex=0;
+    }
+    for (int i=stIndex; i<=edIndex; ++i)
+        vals.push_back(pNode->keys[i]);
+    return;
 }
