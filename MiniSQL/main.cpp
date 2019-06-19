@@ -17,8 +17,11 @@
 using namespace std;
 
 int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
+    std::cout<<">>> Welcome to MiniSQL"<<std::endl;
+    while(1){
+        Interpreter query;
+        query.read();
+    }
     return 0;
 }
 

@@ -23,7 +23,7 @@ public:
     void dropTable(const std::string &tableName);
     void createIndex(std::string tableName, std::string indexName, std::string attr_name);
     void dropIndex(std::string tableName, std::string indexName);
-    Table selectRecord(const std::string &tableName, const std::vector<std::string> targetName,const std::vector<std::string> &condition,int op);
+    Table selectRecord(const std::string &tableName, const std::vector<std::string> targetName,const std::vector<condition> &condition,int op);
     void insertRecord(const std::string &tableName, Tuple& tuple);
     void deleteRecord(const std::string &tableName, const std::string targetName,const condition &condition);
     CatalogManager catalogManager;

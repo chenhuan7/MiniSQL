@@ -43,6 +43,7 @@ int getDataLength(T data) {
     std::stringstream stream;
     stream << data;
     return stream.str().length();
+    
 }
 
 template <typename T>

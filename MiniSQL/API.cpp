@@ -7,6 +7,8 @@
 //
 
 #include "API.hpp"
+API::API(){}
+API::~API(){}
 bool sortcmp(const Tuple &tuple1, const Tuple &tuple2);
 bool isSatisfied(Tuple& tuple, int target_attr, condition where);
 void API::createTable(const std::string &tableName, const std::vector<AttributeType> &data, int primaryKey) {
@@ -25,7 +27,7 @@ void API::createIndex(std::string tableName, std::string indexName, std::string 
     std::string file_path = "INDEX_FILE_" + attributeName + "_" + tableName;
     int type;
     
-    catalogManager.createIndex(tableName, attributeName, index_name);
+    catalogManager.createIndex(tableName, attributeName, indexName);
     std::vector<AttributeType>attr;
     catalogManager.getAttribute(tableName,attr);
     for (int i = 0; i < attr.size(); i++) {
@@ -34,7 +36,8 @@ void API::createIndex(std::string tableName, std::string indexName, std::string 
             break;
         }
     }
-    IndexManager.createIndex(file_path, type);
+    index.createIndex(file_path, type);
+    
     recordManager.createIndex(index , tableName, attributeName);
     int id = -1;
     //API::catalogManager.createIndex(tableName, indexName, id);
@@ -55,22 +58,22 @@ void API::dropIndex(std::string tableName, std::string indexName) {
             break;
         }
     }
-    IndexManager.dropIndex(file_path, type);
+    index.dropIndex(file_path);
     catalogManager.dropIndex(tableName, indexName);
     
     file_path = "./database/index/" + file_path;
     remove(file_path.c_str());
 }
 
-Table API::selectRecord(const std::string &tableName, const std::vector<std::string> targetName,const std::vector<std::string> &condition,int op){
+Table API::selectRecord(const std::string &tableName, const std::vector<std::string> targetName,const std::vector<condition> &condition,int op){
     if(targetName.size()==0){
         return recordManager.selectRecord(tableName);
     }else if(targetName.size()==1){
         recordManager.selectRecord(tableName, targetName[0], condition[0]);
         return recordManager.selectRecord(tableName, targetName[0], condition[0]);
     }else{
-        Table table1 = record.selectRecord(tableName, targetName[0], condition[0]);
-        Table table2 = record.selectRecord(tableName, targetName[1], condition[1]);
+        Table table1 = recordManager.selectRecord(tableName, targetName[0], condition[0]);
+        Table table2 = recordManager.selectRecord(tableName, targetName[1], condition[1]);
         
         if (op)
             return joinTable(table1, table2, targetName[0], condition[0]);

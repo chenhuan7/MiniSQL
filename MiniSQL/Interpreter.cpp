@@ -109,7 +109,8 @@ void Interpreter::selectRecord(int i){
         throw 1;
     }
     tableName=getWord(i);
-    std::vector<AttributeType> attributes=CM.getAttribute(tableName);
+    std::vector<AttributeType> attributes;
+    CM.getAttribute(tableName,attributes);
     if(flag){
         for(int k;k<attributes.size();k++){
             atttributeName.push_back(attributes[k].name);
@@ -191,10 +192,153 @@ void Interpreter::selectRecord(int i){
             }
             
         }
-        outTable=API.selectRecord(tableName, conditions,op);
+        outTable=API.selectRecord(tableName, targetName,conditions,op);
+        
     }
     else{
-        
+        outTable=API.selectRecord(tableName, targetName,conditions,op);
+    }
+    
+    std::vector<AttributeType> attr_record=outTable.data;
+    int use[32]={0};
+    
+    if(atttributeName.size()==0){
+        for(int i=0;i<attr_record.size( );i++)
+            use[i]=i;
+    }
+    else{
+        for(int i=0;i<atttributeName.size();i++)
+            for(int j=0;j<attr_record.size();j++){
+                if(attr_record[j].name==atttributeName[i])
+                {
+                    use[i]=j;
+                    break;
+                }
+            }
+    }
+    std::vector<Tuple> output_tuple=outTable.Tuple;
+    int longest=-1;
+    for(int index=0;index<atttributeName.size();index++){
+        if((int)attr_record[use[index]].name.length()>longest)
+            longest=(int)attr_record[use[index]].name.length();
+    }
+    for(int index=0;index<atttributeName.size();index++){
+        int type=attr_record[use[index]].type;
+        if(type==-1){
+            for(int i=0;i<output_tuple.size();i++){
+                if(longest<getBits(output_tuple[i].getData()[use[index]].intT)){
+                    longest=getBits(output_tuple[i].getData()[use[index]].intT);
+                }
+            }
+        }
+        if(type==0){
+            for(int i=0;i<output_tuple.size();i++){
+                if(longest<getBits(output_tuple[i].getData()[use[index]].floatT)){
+                    longest=getBits(output_tuple[i].getData()[use[index]].floatT);
+                }
+            }
+        }
+        if(type>0){
+            for(int i=0;i<output_tuple.size();i++){
+                if(longest<output_tuple[i].getData()[use[index]].stringT.length()){
+                    longest=(int)output_tuple[i].getData()[use[index]].stringT.length();
+                }
+            }
+        }
+    }
+    longest+=1;
+    for(int index=0;index<atttributeName.size();index++){
+        if(index!=atttributeName.size()-1){
+            for(int i=0;i<(longest-attr_record[use[index]].name.length())/2;i++)
+                printf(" ");
+            printf("%s",attr_record[use[index]].name.c_str());
+            for(int i=0;i<longest-(longest-attr_record[use[index]].name.length())/2-attr_record[use[index]].name.length();i++)
+                printf(" ");
+            printf("|");
+        }
+        else{
+            for(int i=0;i<(longest-attr_record[use[index]].name.length())/2;i++)
+                printf(" ");
+            printf("%s",attr_record[use[index]].name.c_str());
+            for(int i=0;i<longest-(longest-attr_record[use[index]].name.length())/2-attr_record[use[index]].name.length();i++)
+                printf(" ");
+            printf("\n");
+        }
+    }
+    for(int index=0;index<atttributeName.size()*(longest+1);index++){
+        std::cout<<"-";
+    }
+    std::cout<<std::endl;
+    for(int index=0;index<output_tuple.size();index++){
+        for(int i=0;i<atttributeName.size();i++)
+        {
+            switch (output_tuple[index].getData()[use[i]].type) {
+                case -1:
+                    if(i!=atttributeName.size()-1){
+                        int len=output_tuple[index].getData()[use[i]].intT;
+                        len=getBits(len);
+                        for(int i=0;i<(longest-len)/2;i++)
+                            printf(" ");
+                        printf("%d",output_tuple[index].getData()[use[i]].intT);
+                        for(int i=0;i<longest-(longest-len)/2-len;i++)
+                            printf(" ");
+                        printf("|");
+                    }
+                    else{
+                        int len=output_tuple[index].getData()[use[i]].intT;
+                        len=getBits(len);
+                        for(int i=0;i<(longest-len)/2;i++)
+                            printf(" ");
+                        printf("%d",output_tuple[index].getData()[use[i]].intT);
+                        for(int i=0;i<longest-(longest-len)/2-len;i++)
+                            printf(" ");
+                        printf("\n");
+                    }
+                    break;
+                case 0:
+                    if(i!=atttributeName.size()-1){
+                        float num=output_tuple[index].getData()[use[i]].floatT;
+                        int len=getBits(num);
+                        for(int i=0;i<(longest-len)/2;i++)
+                            printf(" ");
+                        printf("%.2f",output_tuple[index].getData()[use[i]].floatT);
+                        for(int i=0;i<longest-(longest-len)/2-len;i++)
+                            printf(" ");
+                        printf("|");
+                    }
+                    else{
+                        float num=output_tuple[index].getData()[use[i]].floatT;
+                        int len=getBits(num);
+                        for(int i=0;i<(longest-len)/2;i++)
+                            printf(" ");
+                        printf("%.2f",output_tuple[index].getData()[use[i]].floatT);
+                        for(int i=0;i<longest-(longest-len)/2-len;i++)
+                            printf(" ");
+                        printf("\n");
+                    }
+                    break;
+                default:
+                    std::string tmp=output_tuple[index].getData()[use[i]].stringT;
+                    if(i!=atttributeName.size()-1){
+                        for(int i=0;i<(longest-tmp.length())/2;i++)
+                            printf(" ");
+                        printf("%s",tmp.c_str());
+                        for(int i=0;i<longest-(longest-(int)tmp.length())/2-(int)tmp.length();i++)
+                            printf(" ");
+                        printf("|");
+                    }
+                    else{
+                        std::string tmp=output_tuple[index].getData()[i].stringT;
+                        for(int i=0;i<(longest-tmp.length())/2;i++)
+                            printf(" ");
+                        printf("%s",tmp.c_str());
+                        for(int i=0;i<longest-(longest-(int)tmp.length())/2-(int)tmp.length();i++)
+                            printf(" ");
+                        printf("\n");
+                    }
+                    break;
+            }
+        }
     }
 }
 
@@ -242,7 +386,8 @@ void Interpreter::deleteRecord(int i){
         conditions.relation=NOT_EQUAL;
     else
         throw 1;
-    std::vector<AttributeType> attributes=CM.getAttribute(tableName);
+    std::vector<AttributeType> attributes;
+    CM.getAttribute(tableName,attributes);
     for(int k;k<attributes.size();k++){
         if(attributes[k].name==attributeName){
             conditions.e.type=attributes[k].type;
@@ -291,7 +436,11 @@ void Interpreter::dropIndex(int i){
     API API;
     std::string indexName;
     indexName=getWord(i);
-    API.dropIndex(indexName);
+    if(getWord(i)!="on"){
+        throw 1;
+    }
+    std::string tableName=getWord(i);
+    API.dropIndex(tableName,indexName);
 }
 
 void Interpreter::createTable(int i){
@@ -406,7 +555,7 @@ void Interpreter::insertRecord(int i){
     if(getWord(i)!="("){
         throw 1;
     }
-    data=CM.getAttribute(tableName);
+    CM.getAttribute(tableName,data);
     k=-1;
     while(1){
         value=getWord(i);

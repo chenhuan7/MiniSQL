@@ -76,6 +76,7 @@ bool CatalogManager::dropTable(std::string tableName)
             bufferManager.modifyPage(pageID);    
         }
     }
+    return true;
 }
 
 bool CatalogManager::getAttribute(std::string tableName, std::vector<AttributeType> &data)
@@ -208,6 +209,7 @@ bool CatalogManager::createIndex(std::string table_name,std::string attr_name,st
     //刷新
     dropTable(table_name);
     createTable(table_name, data, key);
+    return true;
 }
 
 bool CatalogManager::dropIndex(std::string table_name,std::string index_name){
@@ -239,6 +241,7 @@ bool CatalogManager::dropIndex(std::string table_name,std::string index_name){
     //在原有表中删除该表后再插入，实现刷新
     dropTable(table_name);
     createTable(table_name, data, key);
+    return true;
 }
 
 std::string CatalogManager::num2str(int num,short bit){
