@@ -26,9 +26,9 @@ bool CatalogManager::createTable(std::string tableName, const std::vector<Attrib
     //添加name
     str_tmp+=tableName;
     //添加attribute的数量
-    str_tmp=str_tmp+" "+num2str(data.size, 2);
+    str_tmp=str_tmp+" "+num2str(data.size(), 2);
     //添加每个attribute的信息，顺序为类型，名字，是否为唯一
-    for(int i=0;i<data.size;i++)
+    for(int i=0;i<data.size();i++)
         str_tmp=str_tmp+" "+num2str(data[i].type, 1)+" "+num2str(data[i].length, 2)+' '+data[i].name+" "+(data[i].isUnique==true?"1":"0");
     //添加主键信息
     str_tmp=str_tmp+" "+num2str(primary, 2);
@@ -137,7 +137,7 @@ bool CatalogManager::hasAttribute(std::string tableName , std::string attrName)
         return false;
     }
 
-    for (int i=0; i<data.size; i++)
+    for (int i=0; i<data.size(); i++)
     {
         if (tableName==data[i].name)
             return true;
@@ -197,7 +197,7 @@ bool CatalogManager::createIndex(std::string table_name,std::string attr_name,st
     int key;
 
     index_record.indexname[index_record.num]=index_name;
-    for(int index=0;index<data.size;index++){
+    for(int index=0;index<data.size();index++){
         if(attr_name==data[index].name)
         {
             index_record.location[index_record.num]=index;
