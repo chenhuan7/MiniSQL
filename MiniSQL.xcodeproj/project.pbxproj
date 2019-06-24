@@ -15,7 +15,6 @@
 		E413657622A2598F007AD3D5 /* IndexManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E413657422A2598F007AD3D5 /* IndexManager.cpp */; };
 		E413657922A259A4007AD3D5 /* BufferManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E413657722A259A4007AD3D5 /* BufferManager.cpp */; };
 		E413657B22A25C3C007AD3D5 /* makefile in Sources */ = {isa = PBXBuildFile; fileRef = E413657A22A25C3C007AD3D5 /* makefile */; };
-		E453C54922AED67C00D9140A /* BPlusTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E453C54722AED67C00D9140A /* BPlusTree.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -47,7 +46,6 @@
 		E413657822A259A4007AD3D5 /* BufferManager.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BufferManager.hpp; sourceTree = "<group>"; };
 		E413657A22A25C3C007AD3D5 /* makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
 		E413657C22A2B2AE007AD3D5 /* MiniSQL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MiniSQL.h; sourceTree = "<group>"; };
-		E453C54722AED67C00D9140A /* BPlusTree.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BPlusTree.cpp; sourceTree = "<group>"; };
 		E453C54822AED67C00D9140A /* BPlusTree.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BPlusTree.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -96,7 +94,6 @@
 				E413657822A259A4007AD3D5 /* BufferManager.hpp */,
 				E413657A22A25C3C007AD3D5 /* makefile */,
 				E413657C22A2B2AE007AD3D5 /* MiniSQL.h */,
-				E453C54722AED67C00D9140A /* BPlusTree.cpp */,
 				E453C54822AED67C00D9140A /* BPlusTree.hpp */,
 			);
 			path = MiniSQL;
@@ -162,7 +159,6 @@
 				E413656A22A258C5007AD3D5 /* API.cpp in Sources */,
 				E413657322A2596F007AD3D5 /* RecordManager.cpp in Sources */,
 				E413657022A25954007AD3D5 /* CatalogManager.cpp in Sources */,
-				E453C54922AED67C00D9140A /* BPlusTree.cpp in Sources */,
 				E413656722A257B6007AD3D5 /* Interpreter.cpp in Sources */,
 				E413657922A259A4007AD3D5 /* BufferManager.cpp in Sources */,
 				E413657B22A25C3C007AD3D5 /* makefile in Sources */,

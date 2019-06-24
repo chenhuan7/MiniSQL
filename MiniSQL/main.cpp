@@ -15,6 +15,7 @@
 #include "Interpreter.hpp"
 
 using namespace std;
+BufferManager buffer_manager;
 
 int main(int argc, const char * argv[]) {
     std::cout<<">>> Welcome to MiniSQL"<<std::endl;

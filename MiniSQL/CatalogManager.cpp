@@ -287,3 +287,21 @@ Index CatalogManager::getIndex(std::string table_name){
     }
     return index_record;
 }
+
+std::string CatalogManager::IndextoAttr(std::string table_name,std::string index_name) {
+    if(!hasTable(table_name))
+        return "";
+    Index index_record=getIndex(table_name);
+    int hasfind=-1;
+    for(int i=0;i<index_record.num;i++){
+        if(index_record.indexname[i]==index_name){
+            hasfind=i;
+            break;
+        }
+    }
+    if(hasfind==-1)
+        return "";
+    std::vector<AttributeType> data;
+    int attr_record=getAttribute(table_name, data);
+    return "";
+}

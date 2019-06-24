@@ -8,10 +8,7 @@
 #ifndef BUFFERMANAGER_HPP
 #define BUFFERMANAGER_HPP
 
-#include <cstdio>
-#include <iostream>
-#include <vector>
-#include <string>
+#include "MiniSQL.h"
 // 每一页的大小为4KB
 #define PAGESIZE 4096
 // 最大页数为100

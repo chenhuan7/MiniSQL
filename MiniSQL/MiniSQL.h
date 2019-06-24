@@ -18,6 +18,7 @@
 #include <iomanip>
 #include <map>
 
+class Tuple;
 
 class element{
 public:
@@ -99,13 +100,29 @@ public:
     bool isDeleted;
 public:
     Tuple() : isDeleted(false) {};
-    Tuple(const Tuple &tuple_in);  //拷贝元组
-    void addData(element data_in);  //新增元组
-    std::vector<element> getData() const;  //返回数据
-    int getSize();  //返回元组的数据数量
-    bool isDel();
-    void setDeleted();
-    void showTuple();  //显示元组中的所有数据
+//    Tuple(const Tuple &tuple_in);  //拷贝元组
+    void addData(element data_in)  //新增元组
+    {
+        data.push_back(data_in);
+    }
+    std::vector<element> getData() const  //返回数据
+    {
+        std::vector<element> Data;
+        for (int i=0; i<data.size(); ++i)
+            Data.push_back(data[i]);
+        return Data;
+    }
+    int getSize()  //返回元组的数据数量
+    {
+        return data.size();
+    }
+    bool isDel(){
+        return isDeleted;
+    }
+    void setDeleted() {
+        isDeleted=true;
+    }
+//    void showTuple();  //显示元组中的所有数据
 };
 
 class AttributeType {
@@ -156,7 +173,6 @@ public:
     }
     
 };
-
 
 
 typedef enum{

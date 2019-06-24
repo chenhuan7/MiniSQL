@@ -20,12 +20,12 @@ bool isExist(const std::string &fileName) {
 
 void IndexManager::createIndex(const std::string &indexName, int type){
     if (type == TYPE_INT) {
-        BPlusTree<int> *tree = new BPlusTree<int>(indexName, sizeof(int), 11);
+        BPlusTree<int> *tree = new BPlusTree<int>(indexName, sizeof(int), 15);
         indexIntMap.insert(intMap::value_type(indexName, tree));
         return ;
     }
     if (type == TYPE_FLOAT) {
-        BPlusTree<float> *tree = new BPlusTree<float>(indexName, sizeof(float), 13);
+        BPlusTree<float> *tree = new BPlusTree<float>(indexName, sizeof(float), 15);
         indexFloatMap.insert(floatMap::value_type(indexName, tree));
         return ;
     }

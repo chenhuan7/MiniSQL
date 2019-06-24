@@ -12,17 +12,12 @@ template <typename T>
 BPlusTree<T>::BPlusTree(std::string Name, int Size, int Degree):
 fileName(Name), keySize(Size), degree(Degree), root(NULL)
 {
-    initBPlusTree();
+    root = new TreeNode<T>(NULL);
     readValues();
 }
 
 template <typename T>
-BPlusTree<T>::~BPlusTree() {
-    root->clear();
-}
-
-template <typename T>
-bool BPlusTree<T>::insertKey(const T &key, int value) {
+bool BPlusTree<T>::insertKey(const T key, int value) {
     if (!root) {
         root = new TreeNode<T>;
     }
@@ -181,7 +176,7 @@ bool BPlusTree<T>::adjustAfterinsert(TreeNode<T> *pNode) {
 }
 
 template <typename T>
-bool BPlusTree<T>::deleteKey(const T &key) {
+bool BPlusTree<T>::deleteKey(const T key) {
     int index;
     TreeNode<T> *p=root->findKey(key, index);
     if (!p)
@@ -193,7 +188,7 @@ bool BPlusTree<T>::deleteKey(const T &key) {
 }
 
 template <typename T>
-int BPlusTree<T>::searchVal(const T &key) {
+int BPlusTree<T>::searchVal(const T key) {
     int index;
     TreeNode<T> *p=root->findKey(key, index);
     if (!p) {
@@ -218,5 +213,78 @@ void BPlusTree<T>::searchRange(T data1, T data2, std::vector<int> &vals) {
     }
     for (int i=stIndex; i<=edIndex; ++i)
         vals.push_back(pNode->keys[i]);
+    return;
+}
+
+template <typename T>
+void BPlusTree<T>::readValues() {
+    std::string fname = "./database/index/" + fileName;
+    int block_num = getBlockNum(fname);
+    
+    if (block_num <= 0)
+        block_num = 1;
+    
+    for (int i = 0; i < block_num; i++) {
+        char* p = buffer_manager.getPage(fname, i);
+        readValues(p, p+PAGESIZE);
+    }
+}
+
+template <typename T>
+int BPlusTree<T>::getBlockNum(std::string tableName) {
+    char* p;
+    int block_num = -1;
+    p = buffer_manager.getPage(tableName , block_num + 1);
+    while(p[0] != '\0') {
+        block_num++;
+        p = buffer_manager.getPage(tableName , block_num + 1);
+    };
+    return block_num;
+}
+
+template <typename T>
+BPlusTree<T>::~BPlusTree() {
+    std::string fname = "./database/index/" + fileName;
+    int block_num = getBlockNum(fname);
+    
+    Tree ntmp = root;
+    while (!ntmp->isLeaf)
+        ntmp = ntmp->childs[0];
+    int i, j;
+    
+    for (j = 0, i = 0; ntmp != NULL; j++) {
+        char* p = buffer_manager.getPage(fname, j);
+        int offset = 0;
+        
+        memset(p, 0, PAGESIZE);
+        
+        for (i = 0; i < ntmp->num; i++) {
+            p[offset++] = '#';
+            p[offset++] = ' ';
+            
+            copyString(p, offset, ntmp->keys[i]);
+            p[offset++] = ' ';
+            copyString(p, offset, ntmp->vals[i]);
+            p[offset++] = ' ';
+        }
+        
+        p[offset] = '\0';
+        
+        int page_id = buffer_manager.getPageId(fname, j);
+        buffer_manager.modifyPage(page_id);
+        
+        ntmp = ntmp->nextLeafNode;
+    }
+    
+    while (j < block_num) {
+        char* p = buffer_manager.getPage(fname, j);
+        memset(p, 0, PAGESIZE);
+        
+        int page_id = buffer_manager.getPageId(fname, j);
+        buffer_manager.modifyPage(page_id);
+        
+        j++;
+    }
+    
     return;
 }
