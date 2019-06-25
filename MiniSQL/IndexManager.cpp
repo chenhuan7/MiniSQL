@@ -20,17 +20,23 @@ bool isExist(const std::string &fileName) {
 
 void IndexManager::createIndex(const std::string &indexName, int type){
     if (type == TYPE_INT) {
-        BPlusTree<int> *tree = new BPlusTree<int>(indexName, sizeof(int), 15);
+        int degree = (PAGESIZE - sizeof(int)) / (sizeof(int) + sizeof(int));
+        if (degree%2 == 0) --degree;
+        BPlusTree<int> *tree = new BPlusTree<int>(indexName, sizeof(int), degree);
         indexIntMap.insert(intMap::value_type(indexName, tree));
         return ;
     }
     if (type == TYPE_FLOAT) {
-        BPlusTree<float> *tree = new BPlusTree<float>(indexName, sizeof(float), 15);
+        int degree = (PAGESIZE - sizeof(int)) / (sizeof(float) + sizeof(int));
+        if (degree%2 == 0) --degree;
+        BPlusTree<float> *tree = new BPlusTree<float>(indexName, sizeof(float), degree);
         indexFloatMap.insert(floatMap::value_type(indexName, tree));
         return ;
     }
     if (type > 0) {
-        BPlusTree<std::string> *tree = new BPlusTree<std::string>(indexName, sizeof(char)*type, 15);
+        int degree = (PAGESIZE - sizeof(int)) / (sizeof(char)*type + sizeof(int));
+        if (degree%2 == 0) --degree;
+        BPlusTree<std::string> *tree = new BPlusTree<std::string>(indexName, sizeof(char)*type, degree);
         indexStringMap.insert(stringMap::value_type(indexName, tree));
         return ;
     }

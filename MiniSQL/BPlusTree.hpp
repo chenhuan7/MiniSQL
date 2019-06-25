@@ -32,7 +32,7 @@ public:
     bool insertKey(const T &key);
     void insert(int childIndex,const T &key, TreeNode *childNode);
     TreeNode<T>* findKey(const T &key, int &index);
-    TreeNode<T>* split(T key);
+    TreeNode<T>* split(T &key);
     int getKeyIndex(const T &key);
     
 private:
@@ -57,6 +57,7 @@ private:
     Tree root;
     
     void readValues();
+    void readVal(char* p, char* end);
     bool adjustAfterinsert(TreeNode<T> *pNode);
     int getBlockNum(std::string tableName);
 };
@@ -90,7 +91,7 @@ bool BPlusTree<T>::insertKey(const T key, int value) {
     }
     p->insertKey(key, value);
     if (p->keys.size() == degree)
-        adjustAfterinsert(p, key);
+        adjustAfterinsert(p);
     return true;
 }
 
@@ -144,7 +145,7 @@ TreeNode<T>* TreeNode<T>::findKey(const T &key, int &index) {
 }
 
 template <typename T>
-TreeNode<T>* TreeNode<T>::split(T key) {
+TreeNode<T>* TreeNode<T>::split(T &key) {
     TreeNode *newNode = new TreeNode(this->parent, this->isLeaf);
     int Min=(degree-1)/2;
     if (!isLeaf) {
@@ -170,8 +171,8 @@ TreeNode<T>* TreeNode<T>::split(T key) {
             this->keys.pop_back();
             this->values.pop_back();
         }
-        newNode->nextLeafNode = this->nextLeafNode;
-        this->nextLeafNode = newNode;
+        newNode->nextLeaf = this->nextLeaf;
+        this->nextLeaf = newNode;
     }
     return newNode;
 }
@@ -197,7 +198,7 @@ bool TreeNode<T>::insertKey(const T &key, int value) {
         }
         int index = getKeyIndex(key);
         keys.insert(keys.begin()+index, key);
-        values.insert(keys.begin()+index, value);
+        values.insert(values.begin()+index, value);
         return true;
     }
     return false;
@@ -209,9 +210,10 @@ bool TreeNode<T>::insertKey(const T &key) {
         keys.push_back(key);
         return true;
     }
-    index = getKeyIndex(key);
+    int index = getKeyIndex(key);
     keys.insert(keys.begin()+index, key);
     childs.insert(childs.begin()+index+1, NULL);
+    return true;
 }
 
 template <typename T>
@@ -288,8 +290,42 @@ void BPlusTree<T>::readValues() {
     
     for (int i = 0; i < block_num; i++) {
         char* p = buffer_manager.getPage(fname, i);
-        readValues();
+        readVal(p, p+PAGESIZE);
     }
+}
+
+template <typename T>
+void BPlusTree<T>::readVal(char* p, char* end) {
+    T key;
+    int value;
+    
+    for (int i = 0; i < PAGESIZE; i++)
+        if (p[i] != '#')
+            return;
+        else {
+            i += 2;
+            char tmp[100];
+            int j;
+            
+            for (j = 0; i < PAGESIZE && p[i] != ' '; i++)
+                tmp[j++] = p[i];
+            tmp[j] = '\0';
+            std::string s(tmp);
+            std::stringstream stream(s);
+            stream >> key;
+            
+            memset(tmp, 0, sizeof(tmp));
+            
+            i++;
+            for (j = 0; i < PAGESIZE && p[i] != ' '; i++)
+                tmp[j++] = p[i];
+            tmp[j] = '\0';
+            std::string s1(tmp);
+            std::stringstream stream1(s1);
+            stream1 >> value;
+            
+            insertKey(key, value);
+        }
 }
 
 template <typename T>
