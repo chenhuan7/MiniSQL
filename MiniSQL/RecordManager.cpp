@@ -8,19 +8,23 @@
 
 #include "RecordManager.hpp"
 
-
+//输入：表名
+//功能：建立表文件
 void RecordManager::createTableFile(std::string table_name) {
     table_name = "./database/data/" + table_name;
     FILE* f = fopen(table_name.c_str() , "w");
     fclose(f);
 }
-
+//输入：表名
+//功能：删除表文件
 void RecordManager::dropTableFile(std::string table_name) {
     table_name = "./database/data/" + table_name;
     remove(table_name.c_str());
 }
 
-
+//输入：表名，一个元组
+//功能：向对应表中插入一条记录
+//异常：如果元组类型不匹配，抛出tuple_type_conflict异常。如果主键冲突，抛出primary_key_conflict异常。如果unique属性冲突，抛出unique_conflict异常。如果表不存在，抛出table_not_exist异常。
 void RecordManager::insertRecord(std::string table_name , Tuple& tuple) {
     std::string tmp_name = table_name;
     table_name = "./database/data/" + table_name;
@@ -118,7 +122,10 @@ void RecordManager::insertRecord(std::string table_name , Tuple& tuple) {
     }
 }
 
-
+//输入：表名
+//输出：删除的记录数
+//功能：删除对应表中所有记录（不删除表文件）
+//异常：如果表不存在，抛出table_not_exist异常
 int RecordManager::deleteRecord(std::string table_name) {
     std::string tmp_name = table_name;
     table_name = "./database/data/" + table_name;
@@ -165,7 +172,10 @@ int RecordManager::deleteRecord(std::string table_name) {
     }
     return count;
 }
-
+//输入：表名，目标属性，condition
+//输出：删除的记录数
+//功能：删除对应表中所有目标属性值满足condition的记录
+//异常：如果表不存在，抛出table_not_exist异常。如果属性不存在，抛出attribute_not_exist异常。如果Where条件中的两个数据类型不匹配，抛出data_type_conflict异常。
 int RecordManager::deleteRecord(std::string table_name , std::string target_attr , condition where) {
     std::string tmp_name = table_name;
     table_name = "./database/data/" + table_name;
@@ -227,7 +237,10 @@ int RecordManager::deleteRecord(std::string table_name , std::string target_attr
     return count;
 }
 
-
+//输入：表名
+//输出：Table类型对象
+//功能：返回整张表
+//异常：如果表不存在，抛出table_not_exist异常
 Table RecordManager::selectRecord(std::string table_name , std::string result_table_name) {
     std::string tmp_name = table_name;
     table_name = "./database/data/" + table_name;
@@ -266,7 +279,11 @@ Table RecordManager::selectRecord(std::string table_name , std::string result_ta
     }
     return table;
 }
-
+//输入：表名，目标属性，condition
+//输出：Table类型对象
+//功能：返回包含所有目标属性满足condition的记录的表
+//异常：如果表不存在，抛出table_not_exist异常。如果属性不存在，抛出attribute_not_exist异常。
+//如果Where条件中的两个数据类型不匹配，抛出data_type_conflict异常。
 Table RecordManager::selectRecord(std::string table_name , std::string target_attr ,condition where , std::string result_table_name) {
     std::string tmp_name = table_name;
     table_name = "./database/data/" + table_name;
@@ -324,7 +341,9 @@ Table RecordManager::selectRecord(std::string table_name , std::string target_at
     }
     return table;
 }
-
+//输入：表名，目标属性名
+//功能：对表中已经存在的记录建立索引
+//异常：如果表不存在，抛出table_not_exist异常。如果属性不存在，抛出attribute_not_exist异常。
 void RecordManager::createIndex(IndexManager& index_manager , std::string table_name , std::string target_attr) {
     std::string tmp_name = table_name;
     table_name = "./database/data/" + table_name;
@@ -372,7 +391,7 @@ void RecordManager::createIndex(IndexManager& index_manager , std::string table_
     }
 }
 
-
+//获得block编号
 int RecordManager::getBlockNum(std::string table_name) {
     char* p;
     int block_num = -1;
@@ -382,7 +401,7 @@ int RecordManager::getBlockNum(std::string table_name) {
     } while(p[0] != '\0');
     return block_num;
 }
-
+//插入
 void RecordManager::insertRecord1(char* p , int offset , int len , const std::vector<element>& v) {
     std::stringstream stream;
     stream << len;
@@ -411,14 +430,14 @@ void RecordManager::insertRecord1(char* p , int offset , int len , const std::ve
     p[offset + 1] = '0';
     p[offset + 2] = '\n';
 }
-
+//删除
 char* RecordManager::deleteRecord1(char* p) {
     int len = getTupleLength(p);
     p = p + len;
     *(p - 2) = '1';
     return p;
 }
-
+//读入元组
 Tuple RecordManager::readTuple(const char* p ,std::vector<AttributeType> attr) {
     Tuple tuple;
     p = p + 5;
@@ -452,7 +471,7 @@ Tuple RecordManager::readTuple(const char* p ,std::vector<AttributeType> attr) {
         tuple.setDeleted();
     return tuple;
 }
-
+//获得长度
 int RecordManager::getTupleLength(char* p) {
     char tmp[10];
     int i;
@@ -463,7 +482,7 @@ int RecordManager::getTupleLength(char* p) {
     int len = stoi(s);
     return len;
 }
-
+//是否冲突
 bool RecordManager::isConflict(std::vector<Tuple>& tuples , std::vector<element>& v , int index) {
     for (int i = 0;i < tuples.size();i++) {
         if (tuples[i].isDeleted == true)
@@ -486,7 +505,7 @@ bool RecordManager::isConflict(std::vector<Tuple>& tuples , std::vector<element>
     }
     return false;
 }
-
+//index查找
 void RecordManager::searchWithIndex(std::string table_name , std::string target_attr , condition where , std::vector<int>& block_ids) {
     IndexManager index_manager;
     element tmp_data;
@@ -524,7 +543,7 @@ void RecordManager::searchWithIndex(std::string table_name , std::string target_
         index_manager.searchRange(file_path , where.e , where.e , block_ids);
     }
 }
-
+//搜寻满足条件
 int RecordManager::conditionDeleteInBlock(std::string table_name , int block_id , std::vector<AttributeType> attr , int index , condition where) {
     table_name = "./database/data/" + table_name;
     char* p = buffer_manager.getPage(table_name , block_id);
@@ -570,7 +589,7 @@ int RecordManager::conditionDeleteInBlock(std::string table_name , int block_id 
     buffer_manager.modifyPage(page_id);
     return count;
 }
-
+//搜寻满足条件
 void RecordManager::conditionSelectInBlock(std::string table_name , int block_id , std::vector<AttributeType> attr , int index , condition where , std::vector<Tuple>& v) {
     table_name = "./database/data/" + table_name;
     char* p = buffer_manager.getPage(table_name , block_id);

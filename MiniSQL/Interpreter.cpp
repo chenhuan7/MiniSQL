@@ -14,7 +14,7 @@ Interpreter::Interpreter(){
 Interpreter::~Interpreter(){
     
 }
-
+//读入命令
 void Interpreter::read(){
     std::string line;
     do{
@@ -25,7 +25,7 @@ void Interpreter::read(){
     queryString[queryString.length()-2]='\0';
     query();
 }
-
+//分割字符串处理
 void Interpreter::query(){
     for(int i=0;i<queryString.length();i++){
         if(queryString[i]=='*'||queryString[i]==','||queryString[i]=='('||queryString[i]==')'||queryString[i]=='='||queryString[i]=='<'||queryString[i]=='>'){
@@ -79,7 +79,11 @@ void Interpreter::query(){
         std::cout<<"input format error!"<<std::endl;
     }
 }
-
+//功能：进行选择操作，支持单表多约束
+//异常：格式错误则抛出input_format_error
+//如果表不存在，抛出table_not_exist异常
+//如果属性不存在，抛出attribute_not_exist异常
+//如果Where条件中的两个数据类型不匹配，抛出data_type_conflict异常
 void Interpreter::selectRecord(int i){
     API API;
     CatalogManager CM;
@@ -341,7 +345,11 @@ void Interpreter::selectRecord(int i){
         }
     }
 }
-
+//功能：从表中删除相应的元组
+//异常：格式错误则抛出input_format_error异常
+//如果表不存在，抛出table_not_exist异常
+//如果属性不存在，抛出attribute_not_exist异常
+//如果Where条件中的两个数据类型不匹配，抛出data_type_conflict异常
 void Interpreter::deleteRecord(int i){
     API API;
     CatalogManager CM;
@@ -424,14 +432,20 @@ void Interpreter::deleteRecord(int i){
     API.deleteRecord(tableName, attributeName, conditions);
     
 }
-
+//功能：删除表
+//异常：格式错误则抛出input_format_error
+//如果表不存在，抛出table_not_exist异常
 void Interpreter::dropTable(int i){
     API API;
     std::string tableName;
     tableName=getWord(i);
     API.dropTable(tableName);
 }
-
+//功能：在表中删除一个索引
+//异常：格式错误则抛出input_format_error异常
+//如果表不存在，抛出table_not_exist异常
+//如果对应属性不存在，抛出attribute_not_exist异常
+//如果对应属性没有索引，抛出index_not_exist异常
 void Interpreter::dropIndex(int i){
     API API;
     std::string indexName;
@@ -442,7 +456,9 @@ void Interpreter::dropIndex(int i){
     std::string tableName=getWord(i);
     API.dropIndex(tableName,indexName);
 }
-
+//功能：在数据库中插入一个表的元信息
+//异常：格式错误则抛出input_format_error异常
+//如果表不存在，抛出table_not_exist异常
 void Interpreter::createTable(int i){
     API API;
     int k;
@@ -508,7 +524,11 @@ void Interpreter::createTable(int i){
     }
     API.createTable(tableName, data, primary);
 }
-
+//功能：在表中插入一个索引，其对应属性为XX
+//异常：格式错误则抛出input_format_error异常
+//如果表不存在，抛出table_not_exist异常
+//如果对应属性不存在，抛出attribute_not_exist异常
+//如果对应属性已经有了索引，抛出index_exist异常
 void Interpreter::createIndex(int i){
     API API;
     CatalogManager CM;
@@ -535,7 +555,7 @@ void Interpreter::createIndex(int i){
     //待解决：）后面多东西的报错
     API.createIndex(tableName, indexName, attributeName);
 }
-
+//功能：向T1内插入值的信息
 void Interpreter::insertRecord(int i){
     API API;
     CatalogManager CM;
@@ -610,7 +630,8 @@ void Interpreter::insertRecord(int i){
     }
     API.insertRecord(tableName, tupleToInsert);
 }
-
+//输入：execfile 文件路径
+//功能：根据文件路径读取文件信息，并用于数据库的操作
 void Interpreter::execFile(int i){
     std::string tmp;
     std::string filePath;
@@ -629,12 +650,13 @@ void Interpreter::execFile(int i){
         query();
     }while(tmp[k2]!='\n');
 }
-
+//输入：exit;
+//功能：退出数据库
 void Interpreter::exitMiniSQL(){
     std::cout<<">>> bye!"<<std::endl;
     exit(0);
 }
-
+//获得单词
 std::string Interpreter::getWord(int &i){
     int k=0;
     while(queryString[i++]==' ');
@@ -645,7 +667,7 @@ std::string Interpreter::getWord(int &i){
     i--;
     return queryString.substr(i-k,k);
 }
-
+//获得类型
 int Interpreter::getType(int &i){
     std::string type;
     type=getWord(i);
